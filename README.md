@@ -7,7 +7,7 @@ Regalo interactivo de cumpleaños con un corazón animado y una carta que aparec
 Abre el regalo desde cualquier navegador, computadora o celular:
 
 ```text
-https://adriaguirree.github.io/carta_pau/
+https://adriiaguirree.github.io/carta_pau/
 ```
 
 Si el link no carga justo después de publicar cambios, espera 1-3 minutos y recarga la página.
