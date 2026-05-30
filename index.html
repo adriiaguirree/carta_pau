@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Para Pau</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <button class="audio-toggle" id="audioToggle" type="button" aria-pressed="false">Música</button>
+    <main class="experience" aria-live="polite">
+      <section class="scene scene-heart is-active" id="heartScene">
+        <div class="stars" aria-hidden="true"></div>
+        <canvas class="dot-canvas" id="dotCanvas" aria-hidden="true"></canvas>
+        <div class="intro-copy">
+          <p class="eyebrow">Feliz cumple mi amor <3</p>
+          <h1>Para ti,</h1>
+          <p>Un pequeño pedacito de todo lo que significas para mí.</p>
+          <button class="primary-button open-letter-button" id="openLetter" type="button">
+            <span aria-hidden="true">P</span>
+            Abrir carta
+          </button>
+        </div>
+      </section>
+
+      <section class="scene scene-letter" id="letterScene" aria-hidden="true">
+        <div class="letter-border" aria-hidden="true"></div>
+        <div class="envelope" id="envelope">
+          <div class="envelope-back"></div>
+          <div class="envelope-front"></div>
+          <div class="envelope-flap"></div>
+          <div class="seal" aria-hidden="true">P</div>
+        </div>
+        <article class="paper" aria-label="Carta de cumpleaños para Pau">
+          <header class="paper-header">
+            <p class="letter-date">29/06</p>
+            <p class="letter-greeting">Pau:</p>
+          </header>
+          <div class="letter-text">
+            <span id="letterText"></span><span class="type-cursor" id="cursor" aria-hidden="true"></span>
+          </div>
+          <footer class="paper-actions">
+            <button class="ghost-button" id="skipTyping" type="button">Ver completa</button>
+            <button class="ghost-button" id="rereadLetter" type="button">Leer de nuevo</button>
+            <button class="ghost-button" id="downloadLetter" type="button">Guardar carta</button>
+            <button class="ghost-button" id="restart" type="button">Volver al corazón</button>
+          </footer>
+        </article>
+        <div class="final-bloom" id="finalBloom" aria-hidden="true"></div>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
