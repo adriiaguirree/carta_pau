@@ -32,6 +32,7 @@ const finalBloom = document.querySelector("#finalBloom");
 const finalCard = document.querySelector("#finalCard");
 const qrToggle = document.querySelector("#qrToggle");
 const qrPanel = document.querySelector("#qrPanel");
+const viewportMeta = document.querySelector('meta[name="viewport"]');
 const ctx = dotCanvas.getContext("2d");
 
 let index = 0;
@@ -39,6 +40,7 @@ let typingFrame = null;
 let typingStartedAt = 0;
 let envelopeTimer = null;
 let typingStartTimer = null;
+let viewportSettleTimer = null;
 const typingCharactersPerSecond = 34;
 const introDuration = 60000;
 const bluePalette = ["#eefbff", "#d3f4ff", "#aee8ff", "#7bd3ff", "#4fbfff", "#2fa4ea", "#6ba8ff"];
@@ -85,6 +87,35 @@ function startMusic() {
         audioToggle.textContent = "Música";
       });
   }
+}
+
+function setAppHeight() {
+  const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+  document.documentElement.style.setProperty("--app-height", `${Math.round(viewportHeight)}px`);
+}
+
+function normalizeMobileViewport() {
+  if (viewportMeta) {
+    viewportMeta.setAttribute(
+      "content",
+      "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    );
+  }
+
+  window.clearTimeout(viewportSettleTimer);
+  document.body.classList.add("is-orientation-settling");
+  setAppHeight();
+  window.scrollTo(0, 0);
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+
+  viewportSettleTimer = window.setTimeout(() => {
+    setAppHeight();
+    resizeCanvas();
+    createDots();
+    window.scrollTo(0, 0);
+    document.body.classList.remove("is-orientation-settling");
+  }, 520);
 }
 
 function stopMusic() {
@@ -625,7 +656,7 @@ async function downloadLetterImage() {
   }
 
   try {
-    const collage = await loadCanvasImage("media/fondo-carta.jpg?v=20260605-5");
+    const collage = await loadCanvasImage("media/fondo-carta.jpg?v=20260605-6");
     const width = collage.width;
     const height = collage.height;
     const contentX = width * 0.297;
@@ -704,9 +735,15 @@ qrToggle.addEventListener("click", () => {
   qrToggle.setAttribute("aria-expanded", String(isVisible));
 });
 window.addEventListener("resize", () => {
-  resizeCanvas();
-  createDots();
+  normalizeMobileViewport();
 });
+
+window.addEventListener("orientationchange", normalizeMobileViewport);
+
+if (window.visualViewport) {
+  window.visualViewport.addEventListener("resize", normalizeMobileViewport);
+  window.visualViewport.addEventListener("scroll", normalizeMobileViewport);
+}
 
 window.addEventListener("keydown", (event) => {
   if (event.key === "Enter" && heartScene.classList.contains("is-active")) {
@@ -719,9 +756,11 @@ window.addEventListener("keydown", (event) => {
 });
 
 window.addEventListener("load", () => {
+  normalizeMobileViewport();
   window.setTimeout(() => {
     loader.classList.add("is-hidden");
   }, 450);
 });
 
+normalizeMobileViewport();
 startDotAnimation();
