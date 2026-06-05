@@ -89,8 +89,10 @@ function startMusic() {
   }
 }
 
-function setAppHeight() {
+function setAppViewportSize() {
+  const viewportWidth = window.visualViewport ? window.visualViewport.width : window.innerWidth;
   const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+  document.documentElement.style.setProperty("--app-width", `${Math.round(viewportWidth)}px`);
   document.documentElement.style.setProperty("--app-height", `${Math.round(viewportHeight)}px`);
 }
 
@@ -104,13 +106,13 @@ function normalizeMobileViewport() {
 
   window.clearTimeout(viewportSettleTimer);
   document.body.classList.add("is-orientation-settling");
-  setAppHeight();
+  setAppViewportSize();
   window.scrollTo(0, 0);
   document.documentElement.scrollTop = 0;
   document.body.scrollTop = 0;
 
   viewportSettleTimer = window.setTimeout(() => {
-    setAppHeight();
+    setAppViewportSize();
     resizeCanvas();
     createDots();
     window.scrollTo(0, 0);
@@ -656,7 +658,7 @@ async function downloadLetterImage() {
   }
 
   try {
-    const collage = await loadCanvasImage("media/fondo-carta.jpg?v=20260605-6");
+    const collage = await loadCanvasImage("media/fondo-carta.jpg?v=20260605-7");
     const width = collage.width;
     const height = collage.height;
     const contentX = width * 0.297;
