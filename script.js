@@ -523,6 +523,50 @@ function drawRoundedRect(context, x, y, width, height, radius) {
   context.closePath();
 }
 
+function canvasToBlob(canvas) {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob((blob) => {
+      if (blob) {
+        resolve(blob);
+      } else {
+        reject(new Error("No se pudo crear la imagen."));
+      }
+    }, "image/png");
+  });
+}
+
+async function saveCanvasAsImage(canvas, filename) {
+  const blob = await canvasToBlob(canvas);
+  const file = new File([blob], filename, { type: "image/png" });
+
+  if (navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) {
+    try {
+      await navigator.share({
+        files: [file],
+        title: "Carta para Pau"
+      });
+      return;
+    } catch (error) {
+      if (error.name === "AbortError") {
+        return;
+      }
+    }
+  }
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.download = filename;
+  link.href = url;
+  link.rel = "noopener";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  window.setTimeout(() => {
+    URL.revokeObjectURL(url);
+  }, 60000);
+}
+
 async function downloadLetterImage() {
   const originalButtonText = downloadLetter.textContent;
   downloadLetter.textContent = "Guardando...";
@@ -581,7 +625,7 @@ async function downloadLetterImage() {
   }
 
   try {
-    const collage = await loadCanvasImage("media/fondo-carta.jpg?v=20260605-4");
+    const collage = await loadCanvasImage("media/fondo-carta.jpg?v=20260605-5");
     const width = collage.width;
     const height = collage.height;
     const contentX = width * 0.297;
@@ -636,10 +680,7 @@ async function downloadLetterImage() {
     context.font = "28px Georgia, serif";
     context.fillText("Feliz cumpleaños, Pau.", width / 2, contentY + contentHeight - 34);
 
-    const link = document.createElement("a");
-    link.download = "carta-para-pau.png";
-    link.href = canvas.toDataURL("image/png");
-    link.click();
+    await saveCanvasAsImage(canvas, "carta-para-pau.png");
   } finally {
     downloadLetter.textContent = originalButtonText;
     downloadLetter.disabled = false;

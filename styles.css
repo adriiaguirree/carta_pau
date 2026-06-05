@@ -320,7 +320,7 @@ h1 {
   align-items: center;
   background:
     linear-gradient(rgba(237, 250, 255, 0.18), rgba(245, 251, 255, 0.2)),
-    url("media/fondo-carta.jpg?v=20260605-4") center top / 100% auto no-repeat;
+    url("media/fondo-carta.jpg?v=20260605-5") center top / 100% auto no-repeat;
 }
 
 .letter-border {
@@ -763,7 +763,7 @@ h1 {
   .scene-letter {
     background:
       linear-gradient(rgba(237, 250, 255, 0.12), rgba(245, 251, 255, 0.16)),
-      url("media/fondo-carta.jpg?v=20260605-4") center center / cover no-repeat;
+      url("media/fondo-carta.jpg?v=20260605-5") center center / cover no-repeat;
   }
 
   .intro-copy {
