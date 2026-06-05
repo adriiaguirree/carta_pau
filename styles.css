@@ -24,6 +24,46 @@ button {
   font: inherit;
 }
 
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 14px;
+  color: #245f93;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(174, 232, 255, 0.5), transparent 28%),
+    linear-gradient(135deg, #edfaff, #f8fcff);
+  transition: opacity 520ms ease, visibility 520ms ease;
+}
+
+.loader.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.loader-mark {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  color: #ffffff;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #2f9de3, #8fb7ff);
+  box-shadow: 0 18px 44px rgba(36, 91, 130, 0.2);
+  animation: loaderPulse 1.6s ease-in-out infinite;
+}
+
+.loader p {
+  margin: 0;
+  font-weight: 700;
+}
+
 .audio-toggle {
   position: fixed;
   top: 14px;
@@ -38,6 +78,59 @@ button {
   background: rgba(255, 255, 255, 0.72);
   box-shadow: inset 0 0 0 1px rgba(47, 164, 234, 0.26), 0 10px 28px rgba(36, 91, 130, 0.12);
   backdrop-filter: blur(10px);
+}
+
+.qr-toggle {
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 20;
+  min-height: 38px;
+  padding: 0 16px;
+  border-radius: 999px;
+  color: #245f93;
+  font-size: 0.9rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: inset 0 0 0 1px rgba(47, 164, 234, 0.26), 0 10px 28px rgba(36, 91, 130, 0.12);
+  backdrop-filter: blur(10px);
+}
+
+.qr-panel {
+  position: fixed;
+  top: 58px;
+  left: 14px;
+  z-index: 19;
+  width: 178px;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 18px 42px rgba(36, 91, 130, 0.18), inset 0 0 0 1px rgba(47, 164, 234, 0.18);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-8px);
+  transition: opacity 220ms ease, transform 220ms ease;
+  backdrop-filter: blur(10px);
+}
+
+.qr-panel.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.qr-panel img {
+  display: block;
+  width: 100%;
+  border-radius: 8px;
+}
+
+.qr-panel p {
+  margin: 10px 0 0;
+  color: #245f93;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-align: center;
 }
 
 .audio-toggle[aria-pressed="true"] {
@@ -184,20 +277,17 @@ h1 {
 .scene-letter {
   align-items: center;
   background:
-    radial-gradient(circle at 18% 18%, rgba(123, 211, 255, 0.2), transparent 30%),
-    radial-gradient(circle at 82% 28%, rgba(47, 164, 234, 0.16), transparent 28%),
-    linear-gradient(90deg, rgba(125, 178, 220, 0.14) 1px, transparent 1px),
-    linear-gradient(rgba(125, 178, 220, 0.12) 1px, transparent 1px);
-  background-size: 42px 42px;
+    linear-gradient(rgba(237, 250, 255, 0.18), rgba(245, 251, 255, 0.2)),
+    url("media/fondo-carta.jpg") center top / 100% auto no-repeat;
 }
 
 .letter-border {
   position: absolute;
   inset: clamp(14px, 4vw, 42px);
   pointer-events: none;
-  border: 2px solid rgba(80, 161, 219, 0.74);
+  border: 1px solid rgba(80, 161, 219, 0.24);
   border-radius: 28px;
-  box-shadow: inset 0 0 0 8px rgba(255, 255, 255, 0.34), 0 24px 70px rgba(36, 91, 130, 0.22);
+  box-shadow: inset 0 0 0 8px rgba(255, 255, 255, 0.16), 0 24px 70px rgba(36, 91, 130, 0.12);
 }
 
 .letter-border::before,
@@ -205,13 +295,13 @@ h1 {
   content: "";
   position: absolute;
   inset: 12px;
-  border: 1px dashed rgba(47, 164, 234, 0.34);
+  border: 1px dashed rgba(47, 164, 234, 0.16);
   border-radius: 20px;
 }
 
 .letter-border::after {
   inset: 25px;
-  border-color: rgba(123, 211, 255, 0.36);
+  border-color: rgba(123, 211, 255, 0.18);
 }
 
 .envelope {
@@ -411,12 +501,6 @@ h1 {
   white-space: pre-wrap;
 }
 
-.ink-char {
-  opacity: 0;
-  filter: blur(1px);
-  animation: inkSettle 460ms ease forwards;
-}
-
 .type-cursor {
   display: inline-block;
   width: 2px;
@@ -455,6 +539,45 @@ h1 {
   opacity: 0;
 }
 
+.final-card {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(18px, 4vh, 36px);
+  z-index: 6;
+  width: min(86vw, 520px);
+  padding: 14px 18px;
+  border-radius: 12px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 16px 42px rgba(36, 91, 130, 0.15), inset 0 0 0 1px rgba(47, 164, 234, 0.18);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 12px);
+  transition: opacity 420ms ease, transform 420ms ease;
+  backdrop-filter: blur(10px);
+}
+
+.final-card.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.final-card p {
+  margin: 0;
+  color: #245f93;
+  font-family: "Segoe Script", "Lucida Handwriting", "Brush Script MT", "Bradley Hand", cursive;
+  font-size: clamp(1.25rem, 3vw, 1.8rem);
+  text-shadow: 0 0 0.35px rgba(23, 63, 99, 0.55);
+}
+
+.final-card span {
+  display: block;
+  margin-top: 4px;
+  color: #4d7193;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
 .final-bloom.is-visible {
   opacity: 1;
 }
@@ -482,11 +605,9 @@ h1 {
   46%, 100% { opacity: 0; }
 }
 
-@keyframes inkSettle {
-  to {
-    opacity: 1;
-    filter: blur(0);
-  }
+@keyframes loaderPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
 }
 
 @keyframes envelopeOpen {
@@ -594,6 +715,20 @@ h1 {
     font-size: 0.8rem;
   }
 
+  .qr-toggle {
+    top: 10px;
+    left: 10px;
+    min-height: 34px;
+    padding: 0 12px;
+    font-size: 0.8rem;
+  }
+
+  .qr-panel {
+    top: 50px;
+    left: 10px;
+    width: 148px;
+  }
+
   .letter-border {
     inset: 10px;
     border-radius: 20px;
@@ -601,7 +736,7 @@ h1 {
 
   .paper {
     width: min(92vw, 780px);
-    max-height: 84vh;
+    max-height: 78vh;
     padding: 28px 20px;
   }
 
@@ -628,6 +763,15 @@ h1 {
     min-height: 38px;
     padding: 0 12px;
     font-size: 0.86rem;
+  }
+
+  .final-card {
+    bottom: 8px;
+    padding: 10px 12px;
+  }
+
+  .final-card span {
+    font-size: 0.78rem;
   }
 
 }

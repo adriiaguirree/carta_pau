@@ -7,7 +7,17 @@
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
+    <div class="loader" id="loader" aria-hidden="true">
+      <div class="loader-mark">P</div>
+      <p>Preparando tu carta...</p>
+    </div>
     <button class="audio-toggle" id="audioToggle" type="button" aria-pressed="false">Música</button>
+    <audio id="song" src="media/cancion.mp4" preload="auto" loop></audio>
+    <button class="qr-toggle" id="qrToggle" type="button" aria-expanded="false">QR</button>
+    <aside class="qr-panel" id="qrPanel" aria-label="Código QR para abrir la carta en celular">
+      <img src="media/qr-carta-pau.png" alt="QR de la carta para Pau">
+      <p>Escanea para abrirla en el celular.</p>
+    </aside>
     <main class="experience" aria-live="polite">
       <section class="scene scene-heart is-active" id="heartScene">
         <div class="stars" aria-hidden="true"></div>
@@ -46,6 +56,10 @@
             <button class="ghost-button" id="restart" type="button">Volver al corazón</button>
           </footer>
         </article>
+        <div class="final-card" id="finalCard" aria-live="polite">
+          <p>Feliz cumpleaños, Pau.</p>
+          <span>Te amo con todo mi corazón.</span>
+        </div>
         <div class="final-bloom" id="finalBloom" aria-hidden="true"></div>
       </section>
     </main>

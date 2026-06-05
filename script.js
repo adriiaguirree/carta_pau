@@ -8,13 +8,14 @@ deseo que este nuevo año de tu vida esté lleno de momentos bonitos, de sueños
 
 gracias por ser tú, por tu forma de querer, por tu sonrisa, por tu corazón tan bonito y por hacer de mi vida un lugar mucho más feliz. hoy celebro tu cumpleaños, pero también celebro la suerte inmensa que tengo de coincidir contigo. te amo, paulina, más de lo que puedo escribir y más de lo que alguna vez pensé amar a alguien.
 
-me siento profundamente orgulloso de ti, paulina, de la persona que eres, de todo lo que has logrado y de la forma tan bonita en la que iluminas la vida de quienes tienen la suerte de conocerte. gracias por dejarme acompañarte, por permitirme amarte y por hacerme sentir que el amor puede ser tan real, tan tranquilo y tan inmenso. hoy y siempre voy a estar agradecido contigo, con la vida y con todo lo que nos puso en el mismo camino. feliz cumpleaños, mi amor, te amo con todo mi corazón.
+me siento profundamente orgulloso de ti, de la persona que eres, de todo lo que has logrado y de la forma tan bonita en la que iluminas la vida de quienes tienen la suerte de conocerte. gracias por dejarme acompañarte, por permitirme amarte y por hacerme sentir que el amor puede ser tan real, tan tranquilo y tan inmenso. hoy y siempre voy a estar agradecido contigo, con la vida y con todo lo que nos puso en el mismo camino. feliz cumpleaños, mi amor, te amo con todo mi corazón.
 
 Con amor,
 Adrián`;
 
 const heartScene = document.querySelector("#heartScene");
 const letterScene = document.querySelector("#letterScene");
+const loader = document.querySelector("#loader");
 const openLetter = document.querySelector("#openLetter");
 const letterText = document.querySelector("#letterText");
 const skipTyping = document.querySelector("#skipTyping");
@@ -26,14 +27,19 @@ const dotCanvas = document.querySelector("#dotCanvas");
 const paper = document.querySelector(".paper");
 const envelope = document.querySelector("#envelope");
 const audioToggle = document.querySelector("#audioToggle");
+const song = document.querySelector("#song");
 const finalBloom = document.querySelector("#finalBloom");
+const finalCard = document.querySelector("#finalCard");
+const qrToggle = document.querySelector("#qrToggle");
+const qrPanel = document.querySelector("#qrPanel");
 const ctx = dotCanvas.getContext("2d");
 
 let index = 0;
-let typingTimer = null;
+let typingFrame = null;
+let typingStartedAt = 0;
 let envelopeTimer = null;
 let typingStartTimer = null;
-const typingSpeed = 31;
+const typingCharactersPerSecond = 34;
 const introDuration = 60000;
 const bluePalette = ["#eefbff", "#d3f4ff", "#aee8ff", "#7bd3ff", "#4fbfff", "#2fa4ea", "#6ba8ff"];
 const hydrangeaPalette = ["#d9f5ff", "#aee8ff", "#76cfff", "#8fb7ff", "#b7a8ff", "#d7c4ff", "#f2d8ff"];
@@ -45,9 +51,6 @@ let flowerDots = [];
 let heartPolygon = [];
 let animationFrame = null;
 let introIsReady = false;
-let audioContext = null;
-let musicGain = null;
-let musicTimer = null;
 let isMusicOn = false;
 let finalBloomShown = false;
 
@@ -61,68 +64,34 @@ function seededRandom(seed) {
 
 const random = seededRandom(1402);
 
-function ensureAudioContext() {
-  if (!audioContext) {
-    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    musicGain = audioContext.createGain();
-    musicGain.gain.value = 0.035;
-    musicGain.connect(audioContext.destination);
-  }
-
-  if (audioContext.state === "suspended") {
-    audioContext.resume();
-  }
-}
-
-function playSoftNote(frequency, startTime, duration) {
-  if (!audioContext || !musicGain) {
-    return;
-  }
-
-  const oscillator = audioContext.createOscillator();
-  const gain = audioContext.createGain();
-
-  oscillator.type = "sine";
-  oscillator.frequency.setValueAtTime(frequency, startTime);
-  oscillator.connect(gain);
-  gain.connect(musicGain);
-  gain.gain.setValueAtTime(0, startTime);
-  gain.gain.linearRampToValueAtTime(0.42, startTime + 0.08);
-  gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
-  oscillator.start(startTime);
-  oscillator.stop(startTime + duration + 0.05);
-}
-
 function startMusic() {
-  ensureAudioContext();
-
   if (isMusicOn) {
     return;
   }
 
-  isMusicOn = true;
-  audioToggle.setAttribute("aria-pressed", "true");
-  audioToggle.textContent = "Música ON";
+  song.volume = 0.72;
+  const playPromise = song.play();
 
-  const notes = [392, 493.88, 587.33, 739.99, 659.25, 587.33, 493.88, 440];
-  let step = 0;
-  playSoftNote(notes[0], audioContext.currentTime, 1.8);
-  playSoftNote(notes[2] / 2, audioContext.currentTime + 0.04, 2.2);
-
-  musicTimer = window.setInterval(() => {
-    const now = audioContext.currentTime;
-    playSoftNote(notes[step % notes.length], now, 1.8);
-    playSoftNote(notes[(step + 2) % notes.length] / 2, now + 0.04, 2.2);
-    step += 1;
-  }, 1250);
+  if (playPromise) {
+    playPromise
+      .then(() => {
+        isMusicOn = true;
+        audioToggle.setAttribute("aria-pressed", "true");
+        audioToggle.textContent = "Música ON";
+      })
+      .catch(() => {
+        isMusicOn = false;
+        audioToggle.setAttribute("aria-pressed", "false");
+        audioToggle.textContent = "Música";
+      });
+  }
 }
 
 function stopMusic() {
   isMusicOn = false;
   audioToggle.setAttribute("aria-pressed", "false");
   audioToggle.textContent = "Música";
-  window.clearInterval(musicTimer);
-  musicTimer = null;
+  song.pause();
 }
 
 function ease(value) {
@@ -383,6 +352,7 @@ function showHeartScene() {
   finalBloomShown = false;
   finalBloom.classList.remove("is-visible");
   finalBloom.textContent = "";
+  finalCard.classList.remove("is-visible");
   letterScene.classList.remove("is-open");
   letterScene.classList.remove("is-active");
   heartScene.classList.add("is-active");
@@ -399,18 +369,28 @@ function startTyping() {
   finalBloomShown = false;
   finalBloom.classList.remove("is-visible");
   finalBloom.textContent = "";
+  finalCard.classList.remove("is-visible");
   paper.scrollTop = 0;
-  typingTimer = window.setInterval(typeNextCharacter, typingSpeed);
+  typingStartedAt = performance.now();
+  typingFrame = window.requestAnimationFrame(typeNextCharacter);
 }
 
 function stopTyping() {
-  if (typingTimer) {
-    window.clearInterval(typingTimer);
-    typingTimer = null;
+  if (typingFrame) {
+    window.cancelAnimationFrame(typingFrame);
+    typingFrame = null;
   }
 }
 
-function typeNextCharacter() {
+function typeNextCharacter(now) {
+  const elapsedSeconds = (now - typingStartedAt) / 1000;
+  const nextIndex = Math.min(letter.length, Math.floor(elapsedSeconds * typingCharactersPerSecond));
+
+  if (nextIndex !== index) {
+    index = nextIndex;
+    letterText.textContent = letter.slice(0, index);
+  }
+
   if (index >= letter.length) {
     stopTyping();
     cursor.hidden = true;
@@ -418,11 +398,7 @@ function typeNextCharacter() {
     return;
   }
 
-  const span = document.createElement("span");
-  span.className = "ink-char";
-  span.textContent = letter[index];
-  letterText.appendChild(span);
-  index += 1;
+  typingFrame = window.requestAnimationFrame(typeNextCharacter);
 }
 
 function completeLetter() {
@@ -441,18 +417,7 @@ function rereadCurrentLetter() {
 }
 
 function renderFullLetter() {
-  letterText.textContent = "";
-  const fragment = document.createDocumentFragment();
-
-  for (const character of letter) {
-    const span = document.createElement("span");
-    span.className = "ink-char";
-    span.style.animationDelay = "0ms";
-    span.textContent = character;
-    fragment.appendChild(span);
-  }
-
-  letterText.appendChild(fragment);
+  letterText.textContent = letter;
 }
 
 function showFinalBloom() {
@@ -461,6 +426,7 @@ function showFinalBloom() {
   }
 
   finalBloomShown = true;
+  finalCard.classList.add("is-visible");
   finalBloom.textContent = "";
   finalBloom.classList.add("is-visible");
 
@@ -513,105 +479,171 @@ function wrapCanvasText(context, text, x, y, maxWidth, lineHeight) {
   return y;
 }
 
-function downloadLetterImage() {
+function loadCanvasImage(src) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = reject;
+    image.src = src;
+  });
+}
+
+function drawImageCover(context, image, x, y, width, height) {
+  const imageRatio = image.width / image.height;
+  const targetRatio = width / height;
+  let sourceWidth = image.width;
+  let sourceHeight = image.height;
+  let sourceX = 0;
+  let sourceY = 0;
+
+  if (imageRatio > targetRatio) {
+    sourceWidth = image.height * targetRatio;
+    sourceX = (image.width - sourceWidth) / 2;
+  } else {
+    sourceHeight = image.width / targetRatio;
+    sourceY = (image.height - sourceHeight) / 2;
+  }
+
+  context.drawImage(image, sourceX, sourceY, sourceWidth, sourceHeight, x, y, width, height);
+}
+
+function drawRoundedRect(context, x, y, width, height, radius) {
+  const safeRadius = Math.min(radius, width / 2, height / 2);
+
+  context.beginPath();
+  context.moveTo(x + safeRadius, y);
+  context.lineTo(x + width - safeRadius, y);
+  context.quadraticCurveTo(x + width, y, x + width, y + safeRadius);
+  context.lineTo(x + width, y + height - safeRadius);
+  context.quadraticCurveTo(x + width, y + height, x + width - safeRadius, y + height);
+  context.lineTo(x + safeRadius, y + height);
+  context.quadraticCurveTo(x, y + height, x, y + height - safeRadius);
+  context.lineTo(x, y + safeRadius);
+  context.quadraticCurveTo(x, y, x + safeRadius, y);
+  context.closePath();
+}
+
+async function downloadLetterImage() {
+  const originalButtonText = downloadLetter.textContent;
+  downloadLetter.textContent = "Guardando...";
+  downloadLetter.disabled = true;
+
   const canvas = document.createElement("canvas");
-  const scale = 2;
-  const width = 920;
-  const margin = 86;
   const context = canvas.getContext("2d");
 
-  context.font = "30px Georgia, serif";
-  const lineHeight = 46;
-  const tempLines = [];
-  const maxWidth = width - margin * 2;
+  function buildWrappedLines(text, maxWidth) {
+    const lines = [];
 
-  letter.split("\n").forEach((paragraph) => {
-    if (!paragraph) {
-      tempLines.push("");
-      return;
-    }
-
-    let line = "";
-    paragraph.split(" ").forEach((word) => {
-      const testLine = line ? `${line} ${word}` : word;
-      if (context.measureText(testLine).width <= maxWidth) {
-        line = testLine;
-      } else {
-        tempLines.push(line);
-        line = word;
+    text.split("\n").forEach((paragraph) => {
+      if (!paragraph) {
+        lines.push("");
+        return;
       }
+
+      let line = "";
+      paragraph.split(" ").forEach((word) => {
+        const testLine = line ? `${line} ${word}` : word;
+        if (context.measureText(testLine).width <= maxWidth) {
+          line = testLine;
+        } else {
+          lines.push(line);
+          line = word;
+        }
+      });
+      lines.push(line);
     });
-    tempLines.push(line);
-  });
 
-  const height = Math.max(1180, 250 + tempLines.length * lineHeight);
-  canvas.width = width * scale;
-  canvas.height = height * scale;
-  context.scale(scale, scale);
-
-  context.fillStyle = "#eaf7ff";
-  context.fillRect(0, 0, width, height);
-
-  const points = [
-    [48, 62], [118, 44], [210, 60], [330, 48], [468, 62], [610, 46], [746, 60], [872, 50],
-    [858, height * 0.2], [874, height * 0.38], [858, height * 0.58], [872, height * 0.76],
-    [850, height - 52], [722, height - 40], [604, height - 56], [456, height - 42],
-    [306, height - 58], [176, height - 42], [48, height - 58], [62, height * 0.78],
-    [48, height * 0.6], [64, height * 0.42], [48, height * 0.24]
-  ];
-
-  context.save();
-  context.beginPath();
-  points.forEach(([x, y], index) => {
-    if (index === 0) {
-      context.moveTo(x, y);
-    } else {
-      context.lineTo(x, y);
-    }
-  });
-  context.closePath();
-  context.clip();
-
-  const gradient = context.createLinearGradient(0, 40, 0, height - 40);
-  gradient.addColorStop(0, "#fbfdff");
-  gradient.addColorStop(0.52, "#eaf7ff");
-  gradient.addColorStop(1, "#f8fcff");
-  context.fillStyle = gradient;
-  context.fillRect(36, 36, width - 72, height - 72);
-
-  context.fillStyle = "rgba(45, 128, 190, 0.08)";
-  for (let x = 88; x < width - 70; x += 54) {
-    context.fillRect(x, 58, 1, height - 116);
+    return lines;
   }
-  context.restore();
 
-  context.beginPath();
-  points.forEach(([x, y], index) => {
-    if (index === 0) {
-      context.moveTo(x, y);
-    } else {
-      context.lineTo(x, y);
+  function getLineUnits(lines) {
+    return lines.reduce((total, line) => total + (line ? 1 : 0.68), 0);
+  }
+
+  function drawColumnText(lines, x, y, columnWidth, columnHeight, gap, lineHeight) {
+    let column = 0;
+    let currentY = y;
+
+    lines.forEach((line) => {
+      const step = line ? lineHeight : lineHeight * 0.68;
+
+      if (currentY + step > y + columnHeight && column === 0) {
+        column = 1;
+        currentY = y;
+      }
+
+      if (line) {
+        context.fillText(line, x + column * (columnWidth + gap), currentY);
+      }
+
+      currentY += step;
+    });
+  }
+
+  try {
+    const collage = await loadCanvasImage("media/fondo-carta.jpg");
+    const width = collage.width;
+    const height = collage.height;
+    const contentX = width * 0.297;
+    const contentY = height * 0.105;
+    const contentWidth = width * 0.424;
+    const contentHeight = height * 0.795;
+    const columnGap = width * 0.023;
+    const columnWidth = (contentWidth - columnGap) / 2;
+    const textColumnWidth = columnWidth - 18;
+    const bodyY = contentY + height * 0.155;
+    const bodyHeight = contentHeight - height * 0.235;
+    const maxUnitsPerPage = 2 * bodyHeight;
+    let fontSize = 26;
+    let lineHeight = 36;
+    let lines = [];
+
+    while (fontSize >= 16) {
+      context.font = `${fontSize}px Georgia, serif`;
+      lineHeight = fontSize * 1.43;
+      lines = buildWrappedLines(letter, textColumnWidth);
+
+      if (getLineUnits(lines) * lineHeight <= maxUnitsPerPage) {
+        break;
+      }
+
+      fontSize -= 1;
     }
-  });
-  context.closePath();
-  context.strokeStyle = "rgba(72, 151, 209, 0.52)";
-  context.lineWidth = 3;
-  context.stroke();
 
-  context.fillStyle = "#173f63";
-  context.textAlign = "right";
-  context.font = "30px Georgia, serif";
-  context.fillText("29/06", width - margin, 104);
-  context.textAlign = "left";
-  context.font = "38px Georgia, serif";
-  context.fillText("Pau:", margin, 158);
-  context.font = "30px Georgia, serif";
-  wrapCanvasText(context, letter, margin, 222, maxWidth, lineHeight);
+    canvas.width = width;
+    canvas.height = height;
 
-  const link = document.createElement("a");
-  link.download = "carta-para-pau.png";
-  link.href = canvas.toDataURL("image/png");
-  link.click();
+    context.drawImage(collage, 0, 0, width, height);
+
+    drawRoundedRect(context, contentX - 16, contentY - 12, contentWidth + 32, contentHeight + 24, 24);
+    context.fillStyle = "rgba(255, 255, 255, 0.62)";
+    context.fill();
+
+    context.fillStyle = "#173f63";
+    context.textBaseline = "alphabetic";
+    context.textAlign = "right";
+    context.font = "28px Georgia, serif";
+    context.fillText("29/06", contentX + contentWidth - 30, contentY + 58);
+
+    context.textAlign = "left";
+    context.font = "34px Georgia, serif";
+    context.fillText("Pau:", contentX + 28, contentY + 92);
+
+    context.font = `${fontSize}px Georgia, serif`;
+    drawColumnText(lines, contentX + 28, bodyY, textColumnWidth, bodyHeight, columnGap, lineHeight);
+
+    context.textAlign = "center";
+    context.font = "28px Georgia, serif";
+    context.fillText("Feliz cumpleaños, Pau.", width / 2, contentY + contentHeight - 34);
+
+    const link = document.createElement("a");
+    link.download = "carta-para-pau.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  } finally {
+    downloadLetter.textContent = originalButtonText;
+    downloadLetter.disabled = false;
+  }
 }
 
 openLetter.addEventListener("click", showLetterScene);
@@ -626,6 +658,10 @@ audioToggle.addEventListener("click", () => {
     startMusic();
   }
 });
+qrToggle.addEventListener("click", () => {
+  const isVisible = qrPanel.classList.toggle("is-visible");
+  qrToggle.setAttribute("aria-expanded", String(isVisible));
+});
 window.addEventListener("resize", () => {
   resizeCanvas();
   createDots();
@@ -639,6 +675,12 @@ window.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && letterScene.classList.contains("is-active")) {
     showHeartScene();
   }
+});
+
+window.addEventListener("load", () => {
+  window.setTimeout(() => {
+    loader.classList.add("is-hidden");
+  }, 450);
 });
 
 startDotAnimation();
