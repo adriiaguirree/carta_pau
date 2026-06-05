@@ -581,7 +581,7 @@ async function downloadLetterImage() {
   }
 
   try {
-    const collage = await loadCanvasImage("media/fondo-carta.jpg?v=20260605-3");
+    const collage = await loadCanvasImage("media/fondo-carta.jpg?v=20260605-4");
     const width = collage.width;
     const height = collage.height;
     const contentX = width * 0.297;

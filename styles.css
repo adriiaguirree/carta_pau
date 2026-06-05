@@ -134,6 +134,47 @@ button {
   text-align: center;
 }
 
+.orientation-prompt {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: none;
+  place-items: center;
+  padding: 28px;
+  color: #173f63;
+  text-align: center;
+  background:
+    radial-gradient(circle at 28% 18%, rgba(123, 211, 255, 0.34), transparent 34%),
+    radial-gradient(circle at 78% 22%, rgba(215, 196, 255, 0.28), transparent 36%),
+    linear-gradient(135deg, #edfaff, #f7fcff);
+}
+
+.orientation-prompt div {
+  display: grid;
+  place-items: center;
+  gap: 14px;
+}
+
+.orientation-prompt span {
+  display: grid;
+  place-items: center;
+  width: 82px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  color: #ffffff;
+  font-size: 3rem;
+  line-height: 1;
+  background: linear-gradient(135deg, #1d8fd4, #73cfff);
+  box-shadow: 0 18px 44px rgba(36, 91, 130, 0.2);
+}
+
+.orientation-prompt p {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.6rem, 7vw, 2.4rem);
+  font-weight: 700;
+}
+
 .audio-toggle[aria-pressed="true"] {
   color: #ffffff;
   background: linear-gradient(135deg, #1d8fd4, #73cfff);
@@ -279,7 +320,7 @@ h1 {
   align-items: center;
   background:
     linear-gradient(rgba(237, 250, 255, 0.18), rgba(245, 251, 255, 0.2)),
-    url("media/fondo-carta.jpg?v=20260605-3") center top / 100% auto no-repeat;
+    url("media/fondo-carta.jpg?v=20260605-4") center top / 100% auto no-repeat;
 }
 
 .letter-border {
@@ -691,44 +732,75 @@ h1 {
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 900px) and (orientation: portrait) {
+  .orientation-prompt {
+    display: grid;
+  }
+
+  .experience,
+  .loader,
+  .audio-toggle,
+  .qr-toggle,
+  .qr-panel {
+    visibility: hidden;
+  }
+}
+
+@media (max-width: 960px) and (orientation: landscape) {
   body {
     overflow: hidden;
   }
 
-  .scene {
+  .scene,
+  .experience {
     min-height: 100dvh;
-    padding: 14px;
   }
 
-  .scene-heart {
-    display: block;
+  .scene {
+    padding: 12px;
+  }
+
+  .scene-letter {
+    background:
+      linear-gradient(rgba(237, 250, 255, 0.12), rgba(245, 251, 255, 0.16)),
+      url("media/fondo-carta.jpg?v=20260605-4") center center / cover no-repeat;
   }
 
   .intro-copy {
-    bottom: 24px;
+    bottom: 18px;
+    width: min(72vw, 520px);
+  }
+
+  .intro-copy p:not(.eyebrow) {
+    margin: 10px auto 14px;
+    font-size: 0.9rem;
+  }
+
+  h1 {
+    font-size: clamp(2.7rem, 8vw, 5rem);
+  }
+
+  .audio-toggle,
+  .qr-toggle {
+    top: 8px;
+    min-height: 32px;
+    padding: 0 12px;
+    font-size: 0.78rem;
   }
 
   .audio-toggle {
-    top: 10px;
-    right: 10px;
-    min-height: 34px;
-    padding: 0 12px;
-    font-size: 0.8rem;
+    right: 8px;
   }
 
   .qr-toggle {
-    top: 10px;
-    left: 10px;
-    min-height: 34px;
-    padding: 0 12px;
-    font-size: 0.8rem;
+    left: 8px;
   }
 
   .qr-panel {
-    top: 50px;
-    left: 10px;
-    width: 148px;
+    top: 46px;
+    left: 8px;
+    width: 136px;
+    padding: 9px;
   }
 
   .letter-border {
@@ -736,58 +808,65 @@ h1 {
     border-radius: 20px;
   }
 
+  .envelope {
+    width: min(52vw, 330px);
+  }
+
   .paper {
-    width: min(88vw, 430px);
-    max-height: calc(100dvh - 138px);
-    padding: 30px 30px 22px;
-    border-radius: 14px 24px 16px 22px;
-    background-size: auto, auto, 44px 100%, auto;
+    width: min(56vw, 620px);
+    max-height: calc(100dvh - 28px);
+    padding: 24px 38px 18px;
+    background-size: auto, auto, 46px 100%, auto;
   }
 
   .paper-header {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
   }
 
   .letter-date {
-    font-size: 0.92rem;
+    font-size: 0.88rem;
   }
 
   .letter-greeting {
-    margin-top: 10px;
-    font-size: 1.08rem;
+    margin-top: 8px;
+    font-size: 1rem;
   }
 
   .letter-text {
-    min-height: 0;
-    font-size: clamp(0.9rem, 3.55vw, 1rem);
-    line-height: 1.58;
+    min-height: 145px;
+    font-size: clamp(0.78rem, 2.2vw, 0.98rem);
+    line-height: 1.52;
     overflow-wrap: break-word;
   }
 
   .paper-actions {
     position: sticky;
-    bottom: -10px;
-    gap: 8px;
-    margin-top: 18px;
-    padding: 10px 0 0;
-    background: linear-gradient(rgba(244, 251, 255, 0), rgba(244, 251, 255, 0.94) 24%);
+    bottom: -8px;
+    gap: 7px;
+    margin-top: 12px;
+    padding-top: 8px;
+    background: linear-gradient(rgba(244, 251, 255, 0), rgba(244, 251, 255, 0.94) 28%);
   }
 
   .ghost-button {
-    min-height: 34px;
+    min-height: 30px;
     padding: 0 10px;
-    font-size: 0.78rem;
+    font-size: 0.72rem;
   }
 
   .final-card {
     bottom: 8px;
-    padding: 10px 12px;
+    width: min(60vw, 420px);
+    padding: 9px 12px;
+  }
+
+  .final-card p {
+    font-size: 1rem;
   }
 
   .final-card span {
-    font-size: 0.78rem;
+    font-size: 0.72rem;
   }
-
 }
 
 @media (prefers-reduced-motion: reduce) {
