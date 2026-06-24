@@ -1,6 +1,6 @@
 # Carta digital para Pau
 
-Regalo interactivo de cumpleaños con un corazón animado y una carta que aparece con efecto de máquina de escribir.
+RRegalo para mi hermosa novia.
 
 ## Link publicado
 
