@@ -1,6 +1,6 @@
 # Carta digital para Pau
 
-RRegalo para mi hermosa novia.
+Regalo para mi hermosa novia.
 
 ## Link publicado
 
