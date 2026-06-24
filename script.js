@@ -1,26 +1,38 @@
-const letter = `enamorarme de ti es lo más fácil que he hecho en mi vida, nada me importa en esta vida más que tú y cada día que pasa soy consciente de esto. te amé el día que te conocí, te amo ahora mismo, y te amaré el resto de mi vida.
+const letter = `enamorarme de ti es lo más fácil que he hecho en mi vida. nada me importa en esta vida más que tú, y cada día que pasa soy más consciente de eso. te amé el día que te conocí, te amo ahora mismo y te amaré el resto de mi vida.
 
 eres mi lugar seguro, mi pensamiento bonito en los días difíciles y la razón por la que todo se siente más ligero. no sé cómo explicarlo sin quedarme corto, pero estar contigo me hace sentir que encontré algo que no quiero perder nunca. gracias por existir, por quedarte, por hacerme tan feliz sin siquiera intentarlo. te elegiría una y mil veces, en esta vida y en cualquiera donde vuelva a encontrarte.
 
-y hoy, en tu cumpleaños, no puedo evitar sentirme demasiado afortunado de poder celebrar tu vida. porque un día como hoy nació la persona que se volvió mi todo, la niña que me cambió los días, la forma de ver el amor y hasta la manera en la que entiendo la felicidad. feliz cumpleaños, paulina, mi amor. ojalá pudiera darte en palabras todo lo que significas para mí, pero aun así voy a pasar mi vida intentando demostrártelo.
+la etapa de tener una novia de la paz y pasar las mejores vacaciones de su vida recomiendo no saltársela. esto empezó como un pensamiento en la playa, como un tweet cualquiera, pero terminó abriéndome las puertas para seguir esta carta que ya tenía para ti. gracias por todo lo que me hiciste vivir, por cada momento, por cada risa y por hacer de esta experiencia algo que voy a guardar para siempre en mi memoria.
+
+creía que no podía pasármela mejor en mi vida, pero estar contigo me demostró que cada vez que compartimos más tiempo juntos, superas mis expectativas de una forma que ni yo sabía que era posible. no importa qué pase, esta experiencia será inolvidable para mí, porque la viví contigo.
+
+hoy, en tu cumpleaños, no puedo evitar sentirme demasiado afortunado de poder celebrar tu vida. porque un día como hoy nació la persona que se volvió mi todo, la niña que me cambió los días, la forma de ver el amor y hasta la manera en la que entiendo la felicidad. feliz cumpleaños, paulina, mi amor. ojalá pudiera darte en palabras todo lo que significas para mí, pero aun así voy a pasar mi vida intentando demostrártelo.
 
 deseo que este nuevo año de tu vida esté lleno de momentos bonitos, de sueños cumplidos, de risas que te salgan del alma y de todo el amor que mereces. yo quiero estar ahí para verte crecer, abrazarte en tus días buenos y también en los difíciles, recordarte lo increíble que eres cuando se te olvide y hacerte sentir amada todos los días, no solo hoy.
 
-gracias por ser tú, por tu forma de querer, por tu sonrisa, por tu corazón tan bonito y por hacer de mi vida un lugar mucho más feliz. hoy celebro tu cumpleaños, pero también celebro la suerte inmensa que tengo de coincidir contigo. te amo, paulina, más de lo que puedo escribir y más de lo que alguna vez pensé amar a alguien.
+eres la mejor mujer que he conocido en mi vida. eres mi mejor amiga, mi compañera y la mejor novia que la vida me pudo otorgar. de verdad, esto que escribo es apenas el 1 por ciento de todo lo que siento por ti, y estoy seguro de que este amor seguirá creciendo con el tiempo. celebraré hoy y todos los días de mi vida tu existencia, porque mereces todo lo bonito de la vida, paulina. genuinamente te amo.
 
-me siento profundamente orgulloso de ti, de la persona que eres, de todo lo que has logrado y de la forma tan bonita en la que iluminas la vida de quienes tienen la suerte de conocerte. gracias por dejarme acompañarte, por permitirme amarte y por hacerme sentir que el amor puede ser tan real, tan tranquilo y tan inmenso. hoy y siempre voy a estar agradecido contigo, con la vida y con todo lo que nos puso en el mismo camino. feliz cumpleaños, mi amor, te amo con todo mi corazón.
+gracias por ser tú, por tu forma de querer, por tu sonrisa, por tu corazón tan bonito y por hacer de mi vida un lugar mucho más feliz. hoy celebro tu cumpleaños, pero también celebro la suerte inmensa que tengo de coincidir contigo, de poder acompañarte y de amar a una persona tan increíble como tú.
+
+me siento profundamente orgulloso de ti, de la persona que eres, de todo lo que has logrado y de la forma tan bonita en la que iluminas la vida de quienes tienen la suerte de conocerte. gracias por dejarme estar a tu lado, por permitirme amarte y por hacerme sentir que el amor puede ser tan real, tan tranquilo y tan inmenso.
+
+hoy y siempre voy a estar agradecido contigo, con la vida y con todo lo que nos puso en el mismo camino. feliz cumpleaños, mi amor. te amo más de lo que puedo escribir y más de lo que alguna vez pensé amar a alguien.
 
 Con amor,
 Adrián`;
 
 const heartScene = document.querySelector("#heartScene");
+const memoryScene = document.querySelector("#memoryScene");
 const letterScene = document.querySelector("#letterScene");
 const loader = document.querySelector("#loader");
 const openLetter = document.querySelector("#openLetter");
+const openFinalLetter = document.querySelector("#openFinalLetter");
 const letterText = document.querySelector("#letterText");
 const skipTyping = document.querySelector("#skipTyping");
 const rereadLetter = document.querySelector("#rereadLetter");
 const downloadLetter = document.querySelector("#downloadLetter");
+const downloadMemory = document.querySelector("#downloadMemory");
+const viewMemories = document.querySelector("#viewMemories");
 const restart = document.querySelector("#restart");
 const cursor = document.querySelector("#cursor");
 const dotCanvas = document.querySelector("#dotCanvas");
@@ -32,6 +44,7 @@ const finalBloom = document.querySelector("#finalBloom");
 const finalCard = document.querySelector("#finalCard");
 const qrToggle = document.querySelector("#qrToggle");
 const qrPanel = document.querySelector("#qrPanel");
+const memoryBoard = document.querySelector("#memoryBoard");
 const viewportMeta = document.querySelector('meta[name="viewport"]');
 const ctx = dotCanvas.getContext("2d");
 
@@ -41,10 +54,39 @@ let typingStartedAt = 0;
 let envelopeTimer = null;
 let typingStartTimer = null;
 let viewportSettleTimer = null;
+let memoryTimer = null;
 const typingCharactersPerSecond = 34;
 const introDuration = 60000;
 const bluePalette = ["#eefbff", "#d3f4ff", "#aee8ff", "#7bd3ff", "#4fbfff", "#2fa4ea", "#6ba8ff"];
 const hydrangeaPalette = ["#d9f5ff", "#aee8ff", "#76cfff", "#8fb7ff", "#b7a8ff", "#d7c4ff", "#f2d8ff"];
+const memoryPhotoCount = 51;
+const memoryPhotoSources = Array.from(
+  { length: memoryPhotoCount },
+  (_, photoIndex) => `media/recuerdos/recuerdo-${String(photoIndex + 1).padStart(2, "0")}.jpeg`
+);
+const memoryPhotoDelayStep = Math.min(0.48, Math.max(0.28, 17 / memoryPhotoSources.length));
+const memoryAnimationDuration = Math.ceil((0.55 + (memoryPhotoSources.length - 1) * memoryPhotoDelayStep + 1.8) * 1000);
+const memoryPhotoColumns = Math.min(13, Math.max(11, Math.ceil(Math.sqrt(memoryPhotoSources.length * 2.25))));
+const memoryPhotoRows = Math.ceil(memoryPhotoSources.length / memoryPhotoColumns);
+const memoryPhotoLayout = memoryPhotoSources.map((_, photoIndex) => {
+  const columns = memoryPhotoColumns;
+  const row = Math.floor(photoIndex / columns);
+  const column = photoIndex % columns;
+  const horizontalJitter = [-0.9, 0.8, -0.3, 1, -0.7, 0.5, -0.8, 0.9, -0.2, 0.7, -0.6][photoIndex % 11];
+  const verticalJitter = [-1.3, 0.8, -0.5, 1.2, -0.9, 0.6, 1.3, -0.7, 0.9][photoIndex % 9];
+  const left = 6 + column * (88 / Math.max(1, columns - 1)) + (row % 2 ? 1.2 : -0.4) + horizontalJitter;
+  const top = 9 + row * (80 / Math.max(1, memoryPhotoRows - 1)) + verticalJitter;
+  const rotation = [-6, 4, -3, 5, -4, 3, -6, 5, -4, 6, -2][photoIndex % 11];
+  const ratio = [0.76, 0.88, 0.78, 0.94, 0.82, 0.72, 0.9][photoIndex % 7];
+
+  return {
+    left: `${Math.max(5, Math.min(95, left))}%`,
+    top: `${Math.max(8, Math.min(88, top))}%`,
+    rotation: `${rotation}deg`,
+    ratio: String(ratio),
+    layer: String(2 + (photoIndex % 9))
+  };
+});
 
 let animationStart = performance.now();
 let outlineDots = [];
@@ -55,6 +97,7 @@ let animationFrame = null;
 let introIsReady = false;
 let isMusicOn = false;
 let finalBloomShown = false;
+let memoriesCompleted = false;
 
 function seededRandom(seed) {
   let value = seed;
@@ -65,6 +108,52 @@ function seededRandom(seed) {
 }
 
 const random = seededRandom(1402);
+
+function getMemoryPhotoBackground(src, indexValue) {
+  if (src) {
+    return `url("${src}")`;
+  }
+
+  const hue = 198 + (indexValue % 5) * 8;
+  return `linear-gradient(135deg, hsl(${hue} 80% 88%), #fff8ea 54%, hsl(${hue + 24} 78% 92%))`;
+}
+
+function renderMemoryPhotos() {
+  memoryBoard.textContent = "";
+
+  memoryPhotoLayout.forEach((photo, photoIndex) => {
+    const card = document.createElement("div");
+    card.className = "memory-photo";
+    card.style.setProperty("--left", photo.left);
+    card.style.setProperty("--top", photo.top);
+    card.style.setProperty("--rotation", photo.rotation);
+    card.style.setProperty("--ratio", photo.ratio);
+    card.style.setProperty("--layer", photo.layer);
+    card.style.setProperty("--delay", `${0.55 + photoIndex * memoryPhotoDelayStep}s`);
+    card.style.setProperty("--photo", getMemoryPhotoBackground(memoryPhotoSources[photoIndex], photoIndex));
+    memoryBoard.appendChild(card);
+  });
+}
+
+function resetMemoryAnimation() {
+  window.clearTimeout(memoryTimer);
+  memoriesCompleted = false;
+  memoryScene.classList.remove("is-memory-complete");
+  renderMemoryPhotos();
+  memoryTimer = window.setTimeout(() => {
+    memoriesCompleted = true;
+    memoryScene.classList.add("is-memory-complete");
+  }, memoryAnimationDuration);
+}
+
+function completeMemoryAnimation() {
+  window.clearTimeout(memoryTimer);
+  if (!memoryBoard.children.length) {
+    renderMemoryPhotos();
+  }
+  memoriesCompleted = true;
+  memoryScene.classList.add("is-memory-complete");
+}
 
 function startMusic() {
   if (isMusicOn) {
@@ -359,24 +448,35 @@ function startDotAnimation() {
 }
 
 function showLetterScene() {
+  if (letterScene.classList.contains("is-active") && !memoryScene.classList.contains("is-active")) {
+    return;
+  }
+
   startMusic();
   window.cancelAnimationFrame(animationFrame);
   window.clearTimeout(envelopeTimer);
   window.clearTimeout(typingStartTimer);
+  window.clearTimeout(memoryTimer);
+  completeMemoryAnimation();
   heartScene.classList.remove("is-active");
+  memoryScene.classList.remove("is-active");
   letterScene.classList.add("is-active");
   letterScene.classList.remove("is-open");
   letterScene.removeAttribute("aria-hidden");
   heartScene.setAttribute("aria-hidden", "true");
+  memoryScene.setAttribute("aria-hidden", "true");
   envelopeTimer = window.setTimeout(() => {
     letterScene.classList.add("is-open");
     typingStartTimer = window.setTimeout(startTyping, 850);
   }, 2200);
 }
 
-function showHeartScene() {
+function showMemoryScene(options = {}) {
+  startMusic();
+  window.cancelAnimationFrame(animationFrame);
   window.clearTimeout(envelopeTimer);
   window.clearTimeout(typingStartTimer);
+  window.clearTimeout(memoryTimer);
   stopTyping();
   index = 0;
   letterText.textContent = "";
@@ -388,8 +488,39 @@ function showHeartScene() {
   finalCard.classList.remove("is-visible");
   letterScene.classList.remove("is-open");
   letterScene.classList.remove("is-active");
+  heartScene.classList.remove("is-active");
+  memoryScene.classList.add("is-active");
+  memoryScene.removeAttribute("aria-hidden");
+  heartScene.setAttribute("aria-hidden", "true");
+  letterScene.setAttribute("aria-hidden", "true");
+
+  if (options.completed) {
+    completeMemoryAnimation();
+  } else {
+    resetMemoryAnimation();
+  }
+}
+
+function showHeartScene() {
+  window.clearTimeout(envelopeTimer);
+  window.clearTimeout(typingStartTimer);
+  window.clearTimeout(memoryTimer);
+  stopTyping();
+  index = 0;
+  letterText.textContent = "";
+  cursor.hidden = false;
+  paper.scrollTop = 0;
+  finalBloomShown = false;
+  finalBloom.classList.remove("is-visible");
+  finalBloom.textContent = "";
+  finalCard.classList.remove("is-visible");
+  memoryScene.classList.remove("is-active");
+  memoryScene.classList.remove("is-memory-complete");
+  letterScene.classList.remove("is-open");
+  letterScene.classList.remove("is-active");
   heartScene.classList.add("is-active");
   heartScene.removeAttribute("aria-hidden");
+  memoryScene.setAttribute("aria-hidden", "true");
   letterScene.setAttribute("aria-hidden", "true");
   startDotAnimation();
 }
@@ -658,7 +789,7 @@ async function downloadLetterImage() {
   }
 
   try {
-    const collage = await loadCanvasImage("media/fondo-carta.jpg?v=20260605-7");
+    const collage = await loadCanvasImage("media/fondo-carta.jpg?v=20260623-10");
     const width = collage.width;
     const height = collage.height;
     const contentX = width * 0.297;
@@ -720,10 +851,128 @@ async function downloadLetterImage() {
   }
 }
 
-openLetter.addEventListener("click", showLetterScene);
+function drawMemoryPlaceholder(context, x, y, width, height, indexValue) {
+  const gradient = context.createLinearGradient(x, y, x + width, y + height);
+  gradient.addColorStop(0, indexValue % 2 === 0 ? "#d9f5ff" : "#efe8ff");
+  gradient.addColorStop(0.55, "#fff8ea");
+  gradient.addColorStop(1, indexValue % 3 === 0 ? "#cdefff" : "#e7f7ff");
+  context.fillStyle = gradient;
+  context.fillRect(x, y, width, height);
+}
+
+function drawMemoryFlower(context, x, y, size, color) {
+  context.save();
+  context.fillStyle = color;
+  for (let i = 0; i < 6; i += 1) {
+    const angle = (i / 6) * Math.PI * 2;
+    context.beginPath();
+    context.arc(x + Math.cos(angle) * size * 0.6, y + Math.sin(angle) * size * 0.6, size * 0.34, 0, Math.PI * 2);
+    context.fill();
+  }
+  context.fillStyle = "rgba(255, 255, 255, 0.92)";
+  context.beginPath();
+  context.arc(x, y, size * 0.24, 0, Math.PI * 2);
+  context.fill();
+  context.restore();
+}
+
+async function downloadMemoryImage() {
+  const originalButtonText = downloadMemory.textContent;
+  downloadMemory.textContent = "...";
+  downloadMemory.disabled = true;
+
+  try {
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+    const width = 1600;
+    const height = 900;
+    const loadedImages = await Promise.all(memoryPhotoSources.map((src) => (src ? loadCanvasImage(src).catch(() => null) : null)));
+
+    canvas.width = width;
+    canvas.height = height;
+
+    const background = context.createLinearGradient(0, 0, width, height);
+    background.addColorStop(0, "#f4ead7");
+    background.addColorStop(0.52, "#fbf6eb");
+    background.addColorStop(1, "#eaf7ff");
+    context.fillStyle = background;
+    context.fillRect(0, 0, width, height);
+
+    context.strokeStyle = "rgba(70, 143, 190, 0.2)";
+    context.lineWidth = 2;
+    drawRoundedRect(context, 36, 36, width - 72, height - 72, 34);
+    context.stroke();
+
+    for (let i = 0; i < 44; i += 1) {
+      const edge = i % 4;
+      const x = edge === 0 ? 54 + (i * 53) % (width - 108) : edge === 1 ? width - 52 : edge === 2 ? 54 + (i * 47) % (width - 108) : 52;
+      const y = edge === 0 ? 54 : edge === 1 ? 54 + (i * 37) % (height - 108) : edge === 2 ? height - 54 : 54 + (i * 41) % (height - 108);
+      drawMemoryFlower(context, x, y, 11 + (i % 4) * 2, ["#8fd6ff", "#b7a8ff", "#d8f2ff", "#f7fbff"][i % 4]);
+    }
+
+    memoryPhotoLayout.forEach((photo, photoIndex) => {
+      const x = (parseFloat(photo.left) / 100) * width;
+      const y = (parseFloat(photo.top) / 100) * height;
+      const cardWidth = Math.min(200, Math.max(128, width / (memoryPhotoColumns + 1.15)));
+      const cardHeight = cardWidth / parseFloat(photo.ratio);
+      const rotation = (parseFloat(photo.rotation) * Math.PI) / 180;
+      const image = loadedImages[photoIndex];
+
+      context.save();
+      context.translate(x, y);
+      context.rotate(rotation);
+      context.shadowColor = "rgba(92, 104, 96, 0.24)";
+      context.shadowBlur = 24;
+      context.shadowOffsetY = 12;
+      drawRoundedRect(context, -cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight, 14);
+      context.clip();
+      context.shadowColor = "transparent";
+
+      if (image) {
+        drawImageCover(context, image, -cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight);
+      } else {
+        drawMemoryPlaceholder(context, -cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight, photoIndex);
+      }
+      context.restore();
+    });
+
+    await saveCanvasAsImage(canvas, "recuerdos-vacaciones-pau.png");
+  } finally {
+    downloadMemory.textContent = originalButtonText;
+    downloadMemory.disabled = false;
+  }
+}
+
+function openLetterFromMemories(event) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  completeMemoryAnimation();
+  showLetterScene();
+}
+
+openLetter.addEventListener("click", () => showMemoryScene());
+openFinalLetter.addEventListener("click", openLetterFromMemories);
+openFinalLetter.addEventListener("pointerup", openLetterFromMemories);
+openFinalLetter.addEventListener("touchend", openLetterFromMemories, { passive: false });
+function handleMemorySceneAdvance(event) {
+  if (event.target.closest("#downloadMemory")) {
+    return;
+  }
+
+  if (event.target.closest("#openFinalLetter") || memoriesCompleted) {
+    openLetterFromMemories(event);
+  }
+}
+memoryScene.addEventListener("click", handleMemorySceneAdvance);
+memoryScene.addEventListener("pointerup", handleMemorySceneAdvance);
+memoryScene.addEventListener("touchend", handleMemorySceneAdvance, { passive: false });
 skipTyping.addEventListener("click", completeLetter);
 rereadLetter.addEventListener("click", rereadCurrentLetter);
 downloadLetter.addEventListener("click", downloadLetterImage);
+downloadMemory.addEventListener("click", downloadMemoryImage);
+viewMemories.addEventListener("click", () => showMemoryScene({ completed: true }));
 restart.addEventListener("click", showHeartScene);
 audioToggle.addEventListener("click", () => {
   if (isMusicOn) {
@@ -749,7 +998,15 @@ if (window.visualViewport) {
 
 window.addEventListener("keydown", (event) => {
   if (event.key === "Enter" && heartScene.classList.contains("is-active")) {
+    showMemoryScene();
+  }
+
+  if (event.key === "Enter" && memoryScene.classList.contains("is-active") && memoriesCompleted) {
     showLetterScene();
+  }
+
+  if (event.key === "Escape" && memoryScene.classList.contains("is-active")) {
+    showHeartScene();
   }
 
   if (event.key === "Escape" && letterScene.classList.contains("is-active")) {

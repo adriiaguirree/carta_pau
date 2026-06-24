@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <title>Para Pau</title>
-    <link rel="stylesheet" href="styles.css?v=20260605-7">
+    <link rel="stylesheet" href="styles.css?v=20260623-10">
   </head>
   <body>
     <div class="loader" id="loader" aria-hidden="true">
@@ -12,10 +12,10 @@
       <p>Preparando tu carta...</p>
     </div>
     <button class="audio-toggle" id="audioToggle" type="button" aria-pressed="false">Música</button>
-    <audio id="song" src="media/cancion.mp4?v=20260605-7" preload="auto" loop></audio>
+    <audio id="song" src="media/cancion.mp4?v=20260623-10" preload="auto" loop></audio>
     <button class="qr-toggle" id="qrToggle" type="button" aria-expanded="false">QR</button>
     <aside class="qr-panel" id="qrPanel" aria-label="Código QR para abrir la carta en celular">
-      <img src="media/qr-carta-pau.png?v=20260605-7" alt="QR de la carta para Pau">
+      <img src="media/qr-carta-pau.png?v=20260623-10" alt="QR de la carta para Pau">
       <p>Escanea para abrirla en el celular.</p>
     </aside>
     <div class="orientation-prompt" aria-hidden="true">
@@ -32,10 +32,18 @@
           <p class="eyebrow">Feliz cumple mi amor <3</p>
           <h1>Para ti,</h1>
           <p>Un pequeño pedacito de todo lo que significas para mí.</p>
-          <button class="primary-button open-letter-button" id="openLetter" type="button">
-            <span aria-hidden="true">P</span>
-            Abrir carta
+          <button class="primary-button press-button" id="openLetter" type="button" aria-label="Abrir recuerdos">
+            Presiona aquí
           </button>
+        </div>
+      </section>
+
+      <section class="scene scene-memory" id="memoryScene" aria-hidden="true">
+        <div class="memory-flowers" aria-hidden="true"></div>
+        <div class="memory-board" id="memoryBoard" aria-label="Collage de recuerdos de vacaciones"></div>
+        <div class="memory-actions" id="memoryActions">
+          <button class="primary-button memory-letter-button" id="openFinalLetter" type="button">Abrir carta</button>
+          <button class="ghost-button icon-button" id="downloadMemory" type="button" aria-label="Guardar collage de recuerdos">↓</button>
         </div>
       </section>
 
@@ -59,6 +67,7 @@
             <button class="ghost-button" id="skipTyping" type="button">Ver completa</button>
             <button class="ghost-button" id="rereadLetter" type="button">Leer de nuevo</button>
             <button class="ghost-button" id="downloadLetter" type="button">Guardar carta</button>
+            <button class="ghost-button" id="viewMemories" type="button">Ver recuerdos</button>
             <button class="ghost-button" id="restart" type="button">Volver al corazón</button>
           </footer>
         </article>
@@ -70,6 +79,6 @@
       </section>
     </main>
 
-    <script src="script.js?v=20260605-7"></script>
+    <script src="script.js?v=20260623-10"></script>
   </body>
 </html>

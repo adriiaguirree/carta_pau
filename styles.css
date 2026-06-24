@@ -302,6 +302,26 @@ h1 {
   box-shadow: 0 12px 28px rgba(47, 164, 234, 0.34);
 }
 
+.mark-button {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  min-height: 72px;
+  aspect-ratio: 1;
+  padding: 0;
+  border-radius: 50%;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.press-button {
+  min-height: 54px;
+  padding: 0 26px;
+  border-radius: 999px;
+  font-size: clamp(1rem, 2.4vw, 1.18rem);
+}
+
 .open-letter-button {
   display: inline-flex;
   align-items: center;
@@ -326,11 +346,135 @@ h1 {
   transform: translateY(-2px);
 }
 
+.scene-memory {
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 20% 16%, rgba(174, 232, 255, 0.24), transparent 28%),
+    radial-gradient(circle at 78% 18%, rgba(215, 196, 255, 0.22), transparent 32%),
+    linear-gradient(135deg, #f4ead7 0%, #fbf6eb 48%, #eaf7ff 100%);
+}
+
+.memory-flowers {
+  position: absolute;
+  inset: 14px;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: 28px;
+  background-image:
+    radial-gradient(circle, rgba(72, 164, 223, 0.52) 0 3px, transparent 4px),
+    radial-gradient(circle, rgba(176, 151, 226, 0.42) 0 2px, transparent 3px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.9) 0 2px, transparent 3px);
+  background-position: 2% 8%, 98% 12%, 5% 90%;
+  background-size: 74px 74px, 82px 82px, 64px 64px;
+  box-shadow: inset 0 0 0 1px rgba(70, 143, 190, 0.18), inset 0 0 0 8px rgba(255, 255, 255, 0.16);
+}
+
+.memory-board {
+  position: absolute;
+  inset: clamp(36px, 6vw, 80px);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.memory-photo {
+  position: absolute;
+  left: var(--left);
+  top: var(--top);
+  z-index: var(--layer);
+  width: clamp(104px, 10vw, 168px);
+  aspect-ratio: var(--ratio, 0.78);
+  padding: 0;
+  border-radius: 11px;
+  background: transparent;
+  box-shadow: 0 16px 34px rgba(58, 80, 94, 0.24);
+  opacity: 0;
+  overflow: hidden;
+  transform: translate(-50%, -44%) scale(0.66) rotate(0deg);
+}
+
+.memory-photo::before {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background:
+    linear-gradient(rgba(234, 247, 255, 0.04), rgba(244, 234, 215, 0.08)),
+    var(--photo);
+  background-position: center;
+  background-size: cover;
+  filter: saturate(0.95);
+}
+
+.scene-memory.is-active .memory-photo {
+  animation: memoryPhotoIn 1400ms cubic-bezier(0.2, 0.74, 0.22, 1) var(--delay) forwards;
+}
+
+.scene-memory.is-memory-complete .memory-photo {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1) rotate(var(--rotation));
+  animation: none;
+}
+
+.memory-actions {
+  position: absolute;
+  left: 50%;
+  right: auto;
+  bottom: max(18px, env(safe-area-inset-bottom));
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.62);
+  box-shadow: 0 16px 38px rgba(92, 104, 96, 0.18), inset 0 0 0 1px rgba(70, 143, 190, 0.16);
+  backdrop-filter: blur(12px);
+  opacity: 0;
+  pointer-events: auto;
+  transform: translate(-50%, 18px) scale(0.96);
+}
+
+.memory-actions button {
+  position: relative;
+  z-index: 11;
+  pointer-events: auto;
+  touch-action: manipulation;
+}
+
+.scene-memory.is-memory-complete .memory-actions {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, 0) scale(1);
+  transition: opacity 520ms ease, transform 520ms ease;
+}
+
+.scene-memory.is-memory-complete .memory-actions button {
+  pointer-events: auto;
+}
+
+.icon-button {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  min-height: 46px;
+  aspect-ratio: 1;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 1.35rem;
+}
+
+.memory-letter-button {
+  min-height: 46px;
+  padding: 0 22px;
+  white-space: nowrap;
+}
+
 .scene-letter {
   align-items: center;
   background:
     linear-gradient(rgba(237, 250, 255, 0.18), rgba(245, 251, 255, 0.2)),
-    url("media/fondo-carta.jpg?v=20260605-7") center top / 100% auto no-repeat;
+    url("media/fondo-carta.jpg?v=20260623-10") center top / 100% auto no-repeat;
 }
 
 .letter-border {
@@ -742,6 +886,21 @@ h1 {
   }
 }
 
+@keyframes memoryPhotoIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -42%) scale(0.66) rotate(0deg);
+  }
+  72% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.04) rotate(var(--rotation));
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(var(--rotation));
+  }
+}
+
 @media (max-width: 900px) and (orientation: portrait) {
   .orientation-prompt {
     display: grid;
@@ -775,7 +934,7 @@ h1 {
   .scene-letter {
     background:
       linear-gradient(rgba(237, 250, 255, 0.12), rgba(245, 251, 255, 0.16)),
-      url("media/fondo-carta.jpg?v=20260605-7") center center / cover no-repeat;
+      url("media/fondo-carta.jpg?v=20260623-10") center center / cover no-repeat;
   }
 
   .intro-copy {
@@ -786,6 +945,32 @@ h1 {
   .intro-copy p:not(.eyebrow) {
     margin: 10px auto 14px;
     font-size: 0.9rem;
+  }
+
+  .memory-board {
+    inset: 22px 42px;
+  }
+
+  .memory-photo {
+    width: clamp(74px, 10.4vw, 108px);
+  }
+
+  .memory-actions {
+    bottom: max(8px, env(safe-area-inset-bottom));
+    gap: 8px;
+    padding: 7px 9px;
+  }
+
+  .memory-letter-button {
+    min-height: 34px;
+    padding: 0 14px;
+    font-size: 0.78rem;
+  }
+
+  .memory-actions .icon-button {
+    width: 34px;
+    min-height: 34px;
+    font-size: 1rem;
   }
 
   h1 {
