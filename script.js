@@ -1,25 +1,4 @@
-const letter = `enamorarme de ti es lo más fácil que he hecho en mi vida. nada me importa en esta vida más que tú, y cada día que pasa soy más consciente de eso. te amé el día que te conocí, te amo ahora mismo y te amaré el resto de mi vida.
-
-eres mi lugar seguro, mi pensamiento bonito en los días difíciles y la razón por la que todo se siente más ligero. no sé cómo explicarlo sin quedarme corto, pero estar contigo me hace sentir que encontré algo que no quiero perder nunca. gracias por existir, por quedarte, por hacerme tan feliz sin siquiera intentarlo. te elegiría una y mil veces, en esta vida y en cualquiera donde vuelva a encontrarte.
-
-la etapa de tener una novia de la paz y pasar las mejores vacaciones de su vida recomiendo no saltársela. esto empezó como un pensamiento en la playa, como un tweet cualquiera, pero terminó abriéndome las puertas para seguir esta carta que ya tenía para ti. gracias por todo lo que me hiciste vivir, por cada momento, por cada risa y por hacer de esta experiencia algo que voy a guardar para siempre en mi memoria.
-
-creía que no podía pasármela mejor en mi vida, pero estar contigo me demostró que cada vez que compartimos más tiempo juntos, superas mis expectativas de una forma que ni yo sabía que era posible. no importa qué pase, esta experiencia será inolvidable para mí, porque la viví contigo.
-
-hoy, en tu cumpleaños, no puedo evitar sentirme demasiado afortunado de poder celebrar tu vida. porque un día como hoy nació la persona que se volvió mi todo, la niña que me cambió los días, la forma de ver el amor y hasta la manera en la que entiendo la felicidad. feliz cumpleaños, paulina, mi amor. ojalá pudiera darte en palabras todo lo que significas para mí, pero aun así voy a pasar mi vida intentando demostrártelo.
-
-deseo que este nuevo año de tu vida esté lleno de momentos bonitos, de sueños cumplidos, de risas que te salgan del alma y de todo el amor que mereces. yo quiero estar ahí para verte crecer, abrazarte en tus días buenos y también en los difíciles, recordarte lo increíble que eres cuando se te olvide y hacerte sentir amada todos los días, no solo hoy.
-
-eres la mejor mujer que he conocido en mi vida. eres mi mejor amiga, mi compañera y la mejor novia que la vida me pudo otorgar. de verdad, esto que escribo es apenas el 1 por ciento de todo lo que siento por ti, y estoy seguro de que este amor seguirá creciendo con el tiempo. celebraré hoy y todos los días de mi vida tu existencia, porque mereces todo lo bonito de la vida, paulina. genuinamente te amo.
-
-gracias por ser tú, por tu forma de querer, por tu sonrisa, por tu corazón tan bonito y por hacer de mi vida un lugar mucho más feliz. hoy celebro tu cumpleaños, pero también celebro la suerte inmensa que tengo de coincidir contigo, de poder acompañarte y de amar a una persona tan increíble como tú.
-
-me siento profundamente orgulloso de ti, de la persona que eres, de todo lo que has logrado y de la forma tan bonita en la que iluminas la vida de quienes tienen la suerte de conocerte. gracias por dejarme estar a tu lado, por permitirme amarte y por hacerme sentir que el amor puede ser tan real, tan tranquilo y tan inmenso.
-
-hoy y siempre voy a estar agradecido contigo, con la vida y con todo lo que nos puso en el mismo camino. feliz cumpleaños, mi amor. te amo más de lo que puedo escribir y más de lo que alguna vez pensé amar a alguien.
-
-Con amor,
-Adrián`;
+const letter = `liz rata aqui va la carta liz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la carta`;
 
 const heartScene = document.querySelector("#heartScene");
 const memoryScene = document.querySelector("#memoryScene");
@@ -45,12 +24,26 @@ const finalCard = document.querySelector("#finalCard");
 const qrToggle = document.querySelector("#qrToggle");
 const qrPanel = document.querySelector("#qrPanel");
 const memoryBoard = document.querySelector("#memoryBoard");
+const letterBeachPhotos = document.querySelector("#letterBeachPhotos");
+const photoViewer = document.querySelector("#photoViewer");
+const photoViewerImage = document.querySelector("#photoViewerImage");
+const photoViewerClose = document.querySelector("#photoViewerClose");
+const sceneTransition = document.querySelector("#sceneTransition");
+const travelTransition = document.querySelector("#travelTransition");
 const viewportMeta = document.querySelector('meta[name="viewport"]');
 const ctx = dotCanvas.getContext("2d");
 
 let index = 0;
 let typingFrame = null;
 let typingStartedAt = 0;
+let typingAutoScrollFrame = null;
+let typingAutoScrollTarget = 0;
+let lastAutoScrollAt = 0;
+let programmaticScrollReleaseTimer = null;
+let isTypingActive = false;
+let isAutoScrollEnabled = false;
+let userHasTakenScrollControl = false;
+let isProgrammaticScroll = false;
 let envelopeTimer = null;
 let typingStartTimer = null;
 let viewportSettleTimer = null;
@@ -64,6 +57,59 @@ const memoryPhotoSources = Array.from(
   { length: memoryPhotoCount },
   (_, photoIndex) => `media/recuerdos/recuerdo-${String(photoIndex + 1).padStart(2, "0")}.jpeg`
 );
+const letterSpecialPhotoSources = Array.from(
+  { length: 32 },
+  (_, photoIndex) => `media/carta-recuerdos/carta-${String(photoIndex + 1).padStart(2, "0")}.jpeg`
+);
+const collagePhotoSourcesForLetter = [
+  1, 4, 8, 11, 14, 17, 20, 22, 24, 27, 31, 34, 37, 40, 43, 47, 50, 51
+].map((photoNumber) => `media/recuerdos/recuerdo-${String(photoNumber).padStart(2, "0")}.jpeg`);
+const letterBeachPhotoSources = [...letterSpecialPhotoSources, ...collagePhotoSourcesForLetter];
+const letterBeachMaxPerSide = 20;
+const letterBeachDesktopPerSide = 16;
+const letterBeachLaptopPerSide = 13;
+const letterBeachCompactPerSide = 7;
+const leftLetterPhotoLayout = [
+  { left: 4.5, top: 10, size: "large", ratio: 0.78, rotation: -6 },
+  { left: 14, top: 11, size: "medium", ratio: 0.92, rotation: 4 },
+  { left: 24.5, top: 12.5, size: "small", ratio: 0.8, rotation: -3, soft: true },
+  { left: 8.5, top: 24, size: "medium", ratio: 0.86, rotation: 5 },
+  { left: 20.5, top: 25.5, size: "large", ratio: 0.74, rotation: -5 },
+  { left: 3.8, top: 39, size: "small", ratio: 0.82, rotation: -4, soft: true },
+  { left: 13.5, top: 41.5, size: "large", ratio: 0.9, rotation: 3 },
+  { left: 25.2, top: 41, size: "medium", ratio: 0.78, rotation: -4 },
+  { left: 7.2, top: 56, size: "large", ratio: 0.82, rotation: 4 },
+  { left: 18.8, top: 57.5, size: "medium", ratio: 0.86, rotation: -6 },
+  { left: 27, top: 60, size: "small", ratio: 0.74, rotation: 3, soft: true },
+  { left: 4.8, top: 72.5, size: "medium", ratio: 0.8, rotation: -5 },
+  { left: 15.2, top: 74.5, size: "large", ratio: 0.88, rotation: 5 },
+  { left: 25.2, top: 77, size: "medium", ratio: 0.78, rotation: -3 },
+  { left: 8.2, top: 88.5, size: "small", ratio: 0.84, rotation: 4, soft: true },
+  { left: 20.5, top: 89.5, size: "small", ratio: 0.78, rotation: -4, soft: true },
+  { left: 27.5, top: 22, size: "small", ratio: 0.86, rotation: 5, soft: true },
+  { left: 27.8, top: 51, size: "small", ratio: 0.82, rotation: -2, soft: true },
+  { left: 2.8, top: 86, size: "small", ratio: 0.78, rotation: -3, soft: true },
+  { left: 28.2, top: 91, size: "small", ratio: 0.88, rotation: 3, soft: true }
+].map((photo, photoIndex) => ({
+  left: `${photo.left}%`,
+  top: `${photo.top}%`,
+  width: {
+    large: "clamp(95px, 6.5vw, 150px)",
+    medium: "clamp(82px, 5.8vw, 132px)",
+    small: "clamp(72px, 5vw, 115px)"
+  }[photo.size],
+  ratio: String(photo.ratio),
+  rotation: `${photo.rotation}deg`,
+  position: "center",
+  soft: photo.soft,
+  layer: String(2 + (photoIndex % 5))
+}));
+const rightLetterPhotoLayout = leftLetterPhotoLayout.map((photo) => ({
+  ...photo,
+  left: `${100 - parseFloat(photo.left)}%`,
+  rotation: `${-parseFloat(photo.rotation)}deg`
+}));
+const letterBeachPhotoLayout = [...leftLetterPhotoLayout, ...rightLetterPhotoLayout];
 const memoryPhotoDelayStep = Math.min(0.48, Math.max(0.28, 17 / memoryPhotoSources.length));
 const memoryAnimationDuration = Math.ceil((0.55 + (memoryPhotoSources.length - 1) * memoryPhotoDelayStep + 1.8) * 1000);
 const memoryPhotoColumns = Math.min(13, Math.max(11, Math.ceil(Math.sqrt(memoryPhotoSources.length * 2.25))));
@@ -96,8 +142,19 @@ let heartPolygon = [];
 let animationFrame = null;
 let introIsReady = false;
 let isMusicOn = false;
+let musicWasManuallyStopped = false;
 let finalBloomShown = false;
 let memoriesCompleted = false;
+let hoveredMemoryPhoto = null;
+let memoryHoverFrame = null;
+let memoryPhotoRects = [];
+let currentLetterBeachSelection = { left: [], right: [] };
+let viewportNormalizeFrame = null;
+let isSceneTransitioning = false;
+let isTravelTransitioning = false;
+let travelTransitionTimer = null;
+let travelTransitionCleanupTimer = null;
+const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 function seededRandom(seed) {
   let value = seed;
@@ -109,40 +166,249 @@ function seededRandom(seed) {
 
 const random = seededRandom(1402);
 
-function getMemoryPhotoBackground(src, indexValue) {
-  if (src) {
-    return `url("${src}")`;
-  }
-
-  const hue = 198 + (indexValue % 5) * 8;
-  return `linear-gradient(135deg, hsl(${hue} 80% 88%), #fff8ea 54%, hsl(${hue + 24} 78% 92%))`;
-}
-
 function renderMemoryPhotos() {
+  setHoveredMemoryPhoto(null);
   memoryBoard.textContent = "";
+  const fragment = document.createDocumentFragment();
 
   memoryPhotoLayout.forEach((photo, photoIndex) => {
-    const card = document.createElement("div");
+    const card = document.createElement("button");
+    const image = document.createElement("img");
     card.className = "memory-photo";
+    card.type = "button";
+    card.setAttribute("aria-label", `Abrir recuerdo ${photoIndex + 1}`);
+    card.dataset.src = memoryPhotoSources[photoIndex];
     card.style.setProperty("--left", photo.left);
     card.style.setProperty("--top", photo.top);
     card.style.setProperty("--rotation", photo.rotation);
     card.style.setProperty("--ratio", photo.ratio);
     card.style.setProperty("--layer", photo.layer);
     card.style.setProperty("--delay", `${0.55 + photoIndex * memoryPhotoDelayStep}s`);
-    card.style.setProperty("--photo", getMemoryPhotoBackground(memoryPhotoSources[photoIndex], photoIndex));
-    memoryBoard.appendChild(card);
+    image.src = memoryPhotoSources[photoIndex];
+    image.alt = `Recuerdo de vacaciones ${photoIndex + 1}`;
+    image.loading = photoIndex < 10 ? "eager" : "lazy";
+    image.decoding = "async";
+    card.appendChild(image);
+    fragment.appendChild(card);
+  });
+
+  memoryBoard.appendChild(fragment);
+}
+
+function shuffleArray(items) {
+  const shuffled = [...items];
+
+  for (let i = shuffled.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+
+  return shuffled;
+}
+
+function getLetterBeachPhotosPerSide() {
+  const isCompact = window.matchMedia("(max-width: 960px) and (orientation: landscape)").matches;
+
+  if (isCompact) {
+    return letterBeachCompactPerSide;
+  }
+
+  if (window.matchMedia("(min-width: 1760px)").matches) {
+    return letterBeachMaxPerSide;
+  }
+
+  if (window.matchMedia("(min-width: 1360px)").matches) {
+    return letterBeachDesktopPerSide;
+  }
+
+  return letterBeachLaptopPerSide;
+}
+
+function getRandomPhotos(count, sourcePool, excluded = new Set()) {
+  return shuffleArray(sourcePool.filter((src) => !excluded.has(src))).slice(0, count);
+}
+
+function getRandomLetterBeachSidePhotos(count, excluded = new Set()) {
+  const specialCount = Math.min(Math.ceil(count * 0.62), letterSpecialPhotoSources.length);
+  const collageCount = Math.max(0, count - specialCount);
+  const selected = [];
+  selected.push(...getRandomPhotos(specialCount, letterSpecialPhotoSources, excluded));
+  selected.forEach((src) => excluded.add(src));
+  selected.push(...getRandomPhotos(collageCount, collagePhotoSourcesForLetter, excluded));
+
+  if (selected.length < count) {
+    selected.push(...getRandomPhotos(count - selected.length, letterBeachPhotoSources, excluded));
+  }
+
+  return shuffleArray(selected).slice(0, count);
+}
+
+function buildBalancedLetterBeachSelection(perSide) {
+  const excluded = new Set();
+  const left = getRandomLetterBeachSidePhotos(perSide, excluded);
+  left.forEach((src) => excluded.add(src));
+  const right = getRandomLetterBeachSidePhotos(perSide, excluded);
+
+  return { left, right };
+}
+
+function hasBalancedLetterBeachSelection(perSide) {
+  return (
+    currentLetterBeachSelection.left.length >= perSide &&
+    currentLetterBeachSelection.right.length >= perSide
+  );
+}
+
+function renderLetterBeachPhotos(options = {}) {
+  letterBeachPhotos.textContent = "";
+  const fragment = document.createDocumentFragment();
+  const perSide = Math.min(
+    getLetterBeachPhotosPerSide(),
+    leftLetterPhotoLayout.length,
+    rightLetterPhotoLayout.length
+  );
+
+  if (options.newSelection || !hasBalancedLetterBeachSelection(perSide)) {
+    currentLetterBeachSelection = buildBalancedLetterBeachSelection(perSide);
+  }
+
+  function appendPhoto(src, layout, photoIndex, side) {
+    const photo = document.createElement("span");
+    const image = document.createElement("img");
+
+    photo.className = `letter-beach-photo is-${side}${layout.soft ? " is-soft" : ""}`;
+    photo.style.setProperty("--delay", `${photoIndex * 42}ms`);
+    photo.style.setProperty("--left", layout.left);
+    photo.style.setProperty("--top", layout.top);
+    photo.style.setProperty("--width", layout.width);
+    photo.style.setProperty("--ratio", layout.ratio);
+    photo.style.setProperty("--rotation", layout.rotation);
+    photo.style.setProperty("--position", layout.position);
+    photo.style.setProperty("--layer", layout.layer);
+
+    image.src = src;
+    image.alt = "";
+    image.loading = photoIndex < 4 ? "eager" : "lazy";
+    image.decoding = "async";
+
+    photo.appendChild(image);
+    fragment.appendChild(photo);
+  }
+
+  currentLetterBeachSelection.left.slice(0, perSide).forEach((src, photoIndex) => {
+    appendPhoto(src, leftLetterPhotoLayout[photoIndex], photoIndex, "left");
+  });
+
+  currentLetterBeachSelection.right.slice(0, perSide).forEach((src, photoIndex) => {
+    appendPhoto(src, rightLetterPhotoLayout[photoIndex], photoIndex + perSide, "right");
+  });
+
+  letterBeachPhotos.appendChild(fragment);
+}
+
+function openPhotoViewer(src) {
+  if (!src) {
+    return;
+  }
+
+  photoViewerImage.src = src;
+  photoViewer.setAttribute("aria-hidden", "false");
+  requestAnimationFrame(() => {
+    photoViewer.classList.add("is-visible");
+    photoViewerClose.focus();
+  });
+}
+
+function closePhotoViewer() {
+  photoViewer.classList.remove("is-visible");
+  photoViewer.setAttribute("aria-hidden", "true");
+  photoViewerImage.removeAttribute("src");
+}
+
+function refreshMemoryPhotoRects() {
+  memoryPhotoRects = Array.from(memoryBoard.querySelectorAll(".memory-photo")).map((photo) => {
+    const rect = photo.getBoundingClientRect();
+    return {
+      photo,
+      left: rect.left,
+      right: rect.right,
+      top: rect.top,
+      bottom: rect.bottom,
+      centerX: rect.left + rect.width / 2,
+      centerY: rect.top + rect.height / 2,
+      layer: Number(photo.style.getPropertyValue("--layer")) || 0
+    };
+  });
+}
+
+function findMemoryPhotoAtPoint(clientX, clientY) {
+  let selectedPhoto = null;
+  let selectedScore = Number.POSITIVE_INFINITY;
+
+  if (!memoryPhotoRects.length) {
+    refreshMemoryPhotoRects();
+  }
+
+  memoryPhotoRects.forEach((item) => {
+    if (
+      clientX < item.left ||
+      clientX > item.right ||
+      clientY < item.top ||
+      clientY > item.bottom
+    ) {
+      return;
+    }
+
+    const distance = Math.hypot(clientX - item.centerX, clientY - item.centerY);
+    const score = distance - item.layer * 2;
+
+    if (score < selectedScore) {
+      selectedScore = score;
+      selectedPhoto = item.photo;
+    }
+  });
+
+  return selectedPhoto;
+}
+
+function setHoveredMemoryPhoto(photo) {
+  if (hoveredMemoryPhoto === photo) {
+    return;
+  }
+
+  if (hoveredMemoryPhoto) {
+    hoveredMemoryPhoto.classList.remove("is-hovered");
+  }
+
+  hoveredMemoryPhoto = photo;
+
+  if (hoveredMemoryPhoto) {
+    hoveredMemoryPhoto.classList.add("is-hovered");
+  }
+}
+
+function updateMemoryHover(event) {
+  if (!memoriesCompleted || photoViewer.classList.contains("is-visible")) {
+    setHoveredMemoryPhoto(null);
+    return;
+  }
+
+  window.cancelAnimationFrame(memoryHoverFrame);
+  memoryHoverFrame = window.requestAnimationFrame(() => {
+    setHoveredMemoryPhoto(findMemoryPhotoAtPoint(event.clientX, event.clientY));
   });
 }
 
 function resetMemoryAnimation() {
   window.clearTimeout(memoryTimer);
   memoriesCompleted = false;
+  memoryPhotoRects = [];
   memoryScene.classList.remove("is-memory-complete");
   renderMemoryPhotos();
   memoryTimer = window.setTimeout(() => {
     memoriesCompleted = true;
     memoryScene.classList.add("is-memory-complete");
+    refreshMemoryPhotoRects();
   }, memoryAnimationDuration);
 }
 
@@ -153,29 +419,64 @@ function completeMemoryAnimation() {
   }
   memoriesCompleted = true;
   memoryScene.classList.add("is-memory-complete");
+  window.requestAnimationFrame(refreshMemoryPhotoRects);
 }
 
-function startMusic() {
+function updateMusicButton(isOn) {
+  audioToggle.setAttribute("aria-pressed", String(isOn));
+  audioToggle.textContent = isOn ? "Música ON" : "Música";
+}
+
+function startMusic(options = {}) {
+  const isAutomatic = Boolean(options.automatic);
+
   if (isMusicOn) {
-    return;
+    return Promise.resolve(true);
+  }
+
+  if (isAutomatic && musicWasManuallyStopped) {
+    return Promise.resolve(false);
   }
 
   song.volume = 0.72;
   const playPromise = song.play();
 
   if (playPromise) {
-    playPromise
+    return playPromise
       .then(() => {
         isMusicOn = true;
-        audioToggle.setAttribute("aria-pressed", "true");
-        audioToggle.textContent = "Música ON";
+        updateMusicButton(true);
+        return true;
       })
       .catch(() => {
         isMusicOn = false;
-        audioToggle.setAttribute("aria-pressed", "false");
-        audioToggle.textContent = "Música";
+        updateMusicButton(false);
+        return false;
       });
   }
+
+  isMusicOn = true;
+  updateMusicButton(true);
+  return Promise.resolve(true);
+}
+
+function armMusicAutoplayFallback() {
+  const tryAfterInteraction = (event) => {
+    if (event.target.closest("#audioToggle")) {
+      return;
+    }
+
+    if (!isMusicOn && !musicWasManuallyStopped) {
+      startMusic({ automatic: true });
+    }
+    document.removeEventListener("pointerdown", tryAfterInteraction, true);
+    document.removeEventListener("touchend", tryAfterInteraction, true);
+    document.removeEventListener("keydown", tryAfterInteraction, true);
+  };
+
+  document.addEventListener("pointerdown", tryAfterInteraction, true);
+  document.addEventListener("touchend", tryAfterInteraction, true);
+  document.addEventListener("keydown", tryAfterInteraction, true);
 }
 
 function setAppViewportSize() {
@@ -186,6 +487,11 @@ function setAppViewportSize() {
 }
 
 function normalizeMobileViewport() {
+  window.cancelAnimationFrame(viewportNormalizeFrame);
+  viewportNormalizeFrame = window.requestAnimationFrame(runViewportNormalization);
+}
+
+function runViewportNormalization() {
   if (viewportMeta) {
     viewportMeta.setAttribute(
       "content",
@@ -204,6 +510,10 @@ function normalizeMobileViewport() {
     setAppViewportSize();
     resizeCanvas();
     createDots();
+    if (letterScene.classList.contains("is-active")) {
+      renderLetterBeachPhotos();
+    }
+    memoryPhotoRects = [];
     window.scrollTo(0, 0);
     document.body.classList.remove("is-orientation-settling");
   }, 520);
@@ -211,9 +521,80 @@ function normalizeMobileViewport() {
 
 function stopMusic() {
   isMusicOn = false;
-  audioToggle.setAttribute("aria-pressed", "false");
-  audioToggle.textContent = "Música";
+  musicWasManuallyStopped = true;
+  updateMusicButton(false);
   song.pause();
+}
+
+function runSceneTransition(changeScene) {
+  if (isSceneTransitioning || isTravelTransitioning) {
+    return;
+  }
+
+  isSceneTransitioning = true;
+  sceneTransition.classList.add("is-visible");
+
+  window.setTimeout(() => {
+    changeScene();
+
+    window.setTimeout(() => {
+      sceneTransition.classList.remove("is-visible");
+      isSceneTransitioning = false;
+    }, 180);
+  }, 420);
+}
+
+function shouldUseSimpleTravelTransition() {
+  return (
+    reducedMotionQuery.matches ||
+    window.matchMedia("(max-width: 960px)").matches ||
+    navigator.hardwareConcurrency <= 4
+  );
+}
+
+function startTravelTransition() {
+  if (isTravelTransitioning || letterScene.classList.contains("is-active")) {
+    return;
+  }
+
+  isTravelTransitioning = true;
+  completeMemoryAnimation();
+  startMusic();
+  window.clearTimeout(travelTransitionTimer);
+  window.clearTimeout(travelTransitionCleanupTimer);
+  document.body.classList.add("is-traveling");
+  openFinalLetter.disabled = true;
+  travelTransition.classList.toggle("is-simple", shouldUseSimpleTravelTransition());
+  travelTransition.setAttribute("aria-hidden", "false");
+  travelTransition.classList.remove("is-active");
+
+  requestAnimationFrame(() => {
+    travelTransition.classList.add("is-active");
+  });
+
+  const duration = reducedMotionQuery.matches ? 900 : shouldUseSimpleTravelTransition() ? 3400 : 6400;
+  travelTransitionTimer = window.setTimeout(finishTravelTransition, duration);
+}
+
+function finishTravelTransition() {
+  if (!isTravelTransitioning) {
+    return;
+  }
+
+  window.clearTimeout(travelTransitionTimer);
+  letterScene.classList.add("from-beach-transition");
+  showLetterScene();
+
+  travelTransitionCleanupTimer = window.setTimeout(() => {
+    travelTransition.classList.remove("is-active", "is-simple");
+    travelTransition.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("is-traveling");
+    openFinalLetter.disabled = false;
+    isTravelTransitioning = false;
+    window.setTimeout(() => {
+      letterScene.classList.remove("from-beach-transition");
+    }, 900);
+  }, reducedMotionQuery.matches ? 80 : 420);
 }
 
 function ease(value) {
@@ -452,6 +833,7 @@ function showLetterScene() {
     return;
   }
 
+  renderLetterBeachPhotos({ newSelection: true });
   startMusic();
   window.cancelAnimationFrame(animationFrame);
   window.clearTimeout(envelopeTimer);
@@ -478,6 +860,7 @@ function showMemoryScene(options = {}) {
   window.clearTimeout(typingStartTimer);
   window.clearTimeout(memoryTimer);
   stopTyping();
+  resetTypingAutoScroll();
   index = 0;
   letterText.textContent = "";
   cursor.hidden = false;
@@ -486,8 +869,10 @@ function showMemoryScene(options = {}) {
   finalBloom.classList.remove("is-visible");
   finalBloom.textContent = "";
   finalCard.classList.remove("is-visible");
+  currentLetterBeachSelection = { left: [], right: [] };
   letterScene.classList.remove("is-open");
   letterScene.classList.remove("is-active");
+  letterScene.classList.remove("from-beach-transition");
   heartScene.classList.remove("is-active");
   memoryScene.classList.add("is-active");
   memoryScene.removeAttribute("aria-hidden");
@@ -506,6 +891,7 @@ function showHeartScene() {
   window.clearTimeout(typingStartTimer);
   window.clearTimeout(memoryTimer);
   stopTyping();
+  resetTypingAutoScroll();
   index = 0;
   letterText.textContent = "";
   cursor.hidden = false;
@@ -514,10 +900,12 @@ function showHeartScene() {
   finalBloom.classList.remove("is-visible");
   finalBloom.textContent = "";
   finalCard.classList.remove("is-visible");
+  currentLetterBeachSelection = { left: [], right: [] };
   memoryScene.classList.remove("is-active");
   memoryScene.classList.remove("is-memory-complete");
   letterScene.classList.remove("is-open");
   letterScene.classList.remove("is-active");
+  letterScene.classList.remove("from-beach-transition");
   heartScene.classList.add("is-active");
   heartScene.removeAttribute("aria-hidden");
   memoryScene.setAttribute("aria-hidden", "true");
@@ -527,6 +915,7 @@ function showHeartScene() {
 
 function startTyping() {
   stopTyping();
+  resetTypingAutoScroll();
   index = 0;
   letterText.textContent = "";
   cursor.hidden = false;
@@ -534,7 +923,11 @@ function startTyping() {
   finalBloom.classList.remove("is-visible");
   finalBloom.textContent = "";
   finalCard.classList.remove("is-visible");
+  markProgrammaticPaperScroll();
   paper.scrollTop = 0;
+  isTypingActive = true;
+  isAutoScrollEnabled = true;
+  userHasTakenScrollControl = false;
   typingStartedAt = performance.now();
   typingFrame = window.requestAnimationFrame(typeNextCharacter);
 }
@@ -544,6 +937,106 @@ function stopTyping() {
     window.cancelAnimationFrame(typingFrame);
     typingFrame = null;
   }
+
+  isTypingActive = false;
+  isAutoScrollEnabled = false;
+  window.cancelAnimationFrame(typingAutoScrollFrame);
+  typingAutoScrollFrame = null;
+}
+
+function resetTypingAutoScroll() {
+  window.cancelAnimationFrame(typingAutoScrollFrame);
+  window.clearTimeout(programmaticScrollReleaseTimer);
+  typingAutoScrollFrame = null;
+  typingAutoScrollTarget = 0;
+  lastAutoScrollAt = 0;
+  isAutoScrollEnabled = false;
+  userHasTakenScrollControl = false;
+  isProgrammaticScroll = false;
+}
+
+function markProgrammaticPaperScroll() {
+  window.clearTimeout(programmaticScrollReleaseTimer);
+  isProgrammaticScroll = true;
+  programmaticScrollReleaseTimer = window.setTimeout(() => {
+    isProgrammaticScroll = false;
+  }, 140);
+}
+
+function disableTypingAutoScrollFromUser() {
+  if (!isTypingActive) {
+    return;
+  }
+
+  userHasTakenScrollControl = true;
+  isAutoScrollEnabled = false;
+  window.cancelAnimationFrame(typingAutoScrollFrame);
+  typingAutoScrollFrame = null;
+}
+
+function animatePaperScroll() {
+  if (!isTypingActive || !isAutoScrollEnabled || userHasTakenScrollControl) {
+    typingAutoScrollFrame = null;
+    return;
+  }
+
+  const distance = typingAutoScrollTarget - paper.scrollTop;
+
+  if (Math.abs(distance) < 1) {
+    markProgrammaticPaperScroll();
+    paper.scrollTop = typingAutoScrollTarget;
+    typingAutoScrollFrame = null;
+    return;
+  }
+
+  markProgrammaticPaperScroll();
+  paper.scrollTop += distance * (reducedMotionQuery.matches ? 0.9 : 0.22);
+  typingAutoScrollFrame = window.requestAnimationFrame(animatePaperScroll);
+}
+
+function scrollPaperToTypingCursor(target) {
+  if (!isTypingActive || !isAutoScrollEnabled || userHasTakenScrollControl) {
+    return;
+  }
+
+  const maxScroll = Math.max(0, paper.scrollHeight - paper.clientHeight);
+  typingAutoScrollTarget = Math.max(0, Math.min(maxScroll, target));
+
+  if (reducedMotionQuery.matches) {
+    markProgrammaticPaperScroll();
+    paper.scrollTop = typingAutoScrollTarget;
+    return;
+  }
+
+  if (!typingAutoScrollFrame) {
+    typingAutoScrollFrame = window.requestAnimationFrame(animatePaperScroll);
+  }
+}
+
+function keepTypedTextVisible(now = performance.now()) {
+  if (!isTypingActive || !isAutoScrollEnabled || userHasTakenScrollControl) {
+    return;
+  }
+
+  if (now - lastAutoScrollAt < 180) {
+    return;
+  }
+
+  const maxScroll = Math.max(0, paper.scrollHeight - paper.clientHeight);
+  if (maxScroll <= 0) {
+    return;
+  }
+
+  const cursorBottom = cursor.offsetTop + cursor.offsetHeight;
+  const visibleBottom = paper.scrollTop + paper.clientHeight;
+  const lowerComfortZone = Math.max(86, paper.clientHeight * 0.24);
+
+  if (cursorBottom < visibleBottom - lowerComfortZone) {
+    return;
+  }
+
+  lastAutoScrollAt = now;
+  scrollPaperToTypingCursor(cursorBottom - paper.clientHeight + lowerComfortZone);
 }
 
 function typeNextCharacter(now) {
@@ -551,11 +1044,13 @@ function typeNextCharacter(now) {
   const nextIndex = Math.min(letter.length, Math.floor(elapsedSeconds * typingCharactersPerSecond));
 
   if (nextIndex !== index) {
+    letterText.append(letter.slice(index, nextIndex));
     index = nextIndex;
-    letterText.textContent = letter.slice(0, index);
+    keepTypedTextVisible(now);
   }
 
   if (index >= letter.length) {
+    keepTypedTextVisible(now);
     stopTyping();
     cursor.hidden = true;
     showFinalBloom();
@@ -567,6 +1062,7 @@ function typeNextCharacter(now) {
 
 function completeLetter() {
   stopTyping();
+  resetTypingAutoScroll();
   index = letter.length;
   renderFullLetter();
   cursor.hidden = true;
@@ -577,6 +1073,7 @@ function completeLetter() {
 function rereadCurrentLetter() {
   window.clearTimeout(typingStartTimer);
   stopTyping();
+  resetTypingAutoScroll();
   startTyping();
 }
 
@@ -612,35 +1109,6 @@ function showFinalBloom() {
   window.setTimeout(() => {
     finalBloom.classList.remove("is-visible");
   }, 3300);
-}
-
-function wrapCanvasText(context, text, x, y, maxWidth, lineHeight) {
-  const lines = [];
-  text.split("\n").forEach((paragraph) => {
-    if (!paragraph) {
-      lines.push("");
-      return;
-    }
-
-    let line = "";
-    paragraph.split(" ").forEach((word) => {
-      const testLine = line ? `${line} ${word}` : word;
-      if (context.measureText(testLine).width <= maxWidth) {
-        line = testLine;
-      } else {
-        lines.push(line);
-        line = word;
-      }
-    });
-    lines.push(line);
-  });
-
-  lines.forEach((line) => {
-    context.fillText(line, x, y);
-    y += lineHeight;
-  });
-
-  return y;
 }
 
 function loadCanvasImage(src) {
@@ -685,6 +1153,73 @@ function drawRoundedRect(context, x, y, width, height, radius) {
   context.lineTo(x, y + safeRadius);
   context.quadraticCurveTo(x, y, x + safeRadius, y);
   context.closePath();
+}
+
+function drawSandTexture(context, width, height) {
+  const background = context.createLinearGradient(0, 0, width, height);
+  background.addColorStop(0, "#ead0a0");
+  background.addColorStop(0.34, "#fff0c8");
+  background.addColorStop(0.68, "#efd8aa");
+  background.addColorStop(1, "#cda16a");
+  context.fillStyle = background;
+  context.fillRect(0, 0, width, height);
+
+  const grainColors = ["rgba(255,255,255,0.42)", "rgba(137,96,48,0.18)", "rgba(236,201,143,0.34)"];
+  for (let i = 0; i < 2100; i += 1) {
+    const x = (i * 67) % width;
+    const y = (i * 131) % height;
+    const radius = 0.65 + (i % 4) * 0.28;
+    context.fillStyle = grainColors[i % grainColors.length];
+    context.beginPath();
+    context.arc(x, y, radius, 0, Math.PI * 2);
+    context.fill();
+  }
+
+  const glow = context.createRadialGradient(width * 0.48, height * 0.44, 0, width * 0.48, height * 0.44, width * 0.55);
+  glow.addColorStop(0, "rgba(255, 250, 230, 0.5)");
+  glow.addColorStop(1, "rgba(255, 250, 230, 0)");
+  context.fillStyle = glow;
+  context.fillRect(0, 0, width, height);
+}
+
+function drawLetterBeachBackground(context, width, height) {
+  const skySea = context.createLinearGradient(0, 0, 0, height * 0.46);
+  skySea.addColorStop(0, "#4ab2e0");
+  skySea.addColorStop(0.52, "#d8f5ff");
+  skySea.addColorStop(1, "#fff2d0");
+  context.fillStyle = skySea;
+  context.fillRect(0, 0, width, height * 0.46);
+
+  context.fillStyle = "rgba(255, 255, 255, 0.68)";
+  context.beginPath();
+  context.ellipse(width * 0.5, height * 0.31, width * 0.64, height * 0.1, 0, 0, Math.PI * 2);
+  context.fill();
+
+  context.save();
+  context.beginPath();
+  context.rect(0, height * 0.38, width, height * 0.62);
+  context.clip();
+  drawSandTexture(context, width, height);
+  context.restore();
+
+  const warmGlow = context.createRadialGradient(width * 0.5, height * 0.55, 0, width * 0.5, height * 0.55, width * 0.38);
+  warmGlow.addColorStop(0, "rgba(255, 252, 233, 0.58)");
+  warmGlow.addColorStop(1, "rgba(255, 252, 233, 0)");
+  context.fillStyle = warmGlow;
+  context.fillRect(0, 0, width, height);
+}
+
+function parseCssPercent(value, size) {
+  return (parseFloat(value) / 100) * size;
+}
+
+function getCanvasPhotoWidth(widthValue, canvasWidth) {
+  const numbers = widthValue.match(/[\d.]+/g)?.map(Number) || [120, 6, 150];
+  const min = numbers[0];
+  const preferred = (numbers[1] / 100) * canvasWidth;
+  const max = numbers[2];
+
+  return Math.max(min, Math.min(max, preferred));
 }
 
 function canvasToBlob(canvas) {
@@ -775,9 +1310,13 @@ async function downloadLetterImage() {
     lines.forEach((line) => {
       const step = line ? lineHeight : lineHeight * 0.68;
 
-      if (currentY + step > y + columnHeight && column === 0) {
-        column = 1;
+      if (currentY + step > y + columnHeight) {
+        column += 1;
         currentY = y;
+      }
+
+      if (column > 1) {
+        return;
       }
 
       if (line) {
@@ -789,26 +1328,52 @@ async function downloadLetterImage() {
   }
 
   try {
-    const collage = await loadCanvasImage("media/fondo-carta.jpg?v=20260623-10");
-    const width = collage.width;
-    const height = collage.height;
-    const contentX = width * 0.297;
-    const contentY = height * 0.105;
-    const contentWidth = width * 0.424;
-    const contentHeight = height * 0.795;
-    const columnGap = width * 0.023;
+    const exportPerSide = Math.min(
+      getLetterBeachPhotosPerSide(),
+      leftLetterPhotoLayout.length,
+      rightLetterPhotoLayout.length
+    );
+    const exportSelection = hasBalancedLetterBeachSelection(exportPerSide)
+      ? {
+        left: currentLetterBeachSelection.left.slice(0, exportPerSide),
+        right: currentLetterBeachSelection.right.slice(0, exportPerSide)
+      }
+      : buildBalancedLetterBeachSelection(exportPerSide);
+    const exportEntries = [
+      ...exportSelection.left.map((src, photoIndex) => ({
+        src,
+        layout: leftLetterPhotoLayout[photoIndex],
+        index: photoIndex
+      })),
+      ...exportSelection.right.map((src, photoIndex) => ({
+        src,
+        layout: rightLetterPhotoLayout[photoIndex],
+        index: photoIndex + exportPerSide
+      }))
+    ];
+    const loadedImages = await Promise.all(
+      exportEntries.map((entry) => loadCanvasImage(entry.src).catch(() => null))
+    );
+    const width = 1920;
+    const height = 1080;
+    const contentWidth = width * 0.43;
+    const contentHeight = height * 0.8;
+    const contentX = (width - contentWidth) / 2;
+    const contentY = height * 0.11;
+    const columnGap = width * 0.022;
     const columnWidth = (contentWidth - columnGap) / 2;
-    const textColumnWidth = columnWidth - 18;
-    const bodyY = contentY + height * 0.155;
-    const bodyHeight = contentHeight - height * 0.235;
+    const textColumnWidth = columnWidth - 24;
+    const bodyY = contentY + height * 0.145;
+    const bodyHeight = contentHeight - height * 0.19;
     const maxUnitsPerPage = 2 * bodyHeight;
     let fontSize = 26;
     let lineHeight = 36;
     let lines = [];
+    const exportFont = '"Segoe Script", "Lucida Handwriting", "Brush Script MT", "Bradley Hand", Georgia, serif';
 
-    while (fontSize >= 16) {
-      context.font = `${fontSize}px Georgia, serif`;
-      lineHeight = fontSize * 1.43;
+    while (fontSize >= 9) {
+      context.font = `${fontSize}px ${exportFont}`;
+      lineHeight = fontSize * 1.42;
       lines = buildWrappedLines(letter, textColumnWidth);
 
       if (getLineUnits(lines) * lineHeight <= maxUnitsPerPage) {
@@ -821,30 +1386,60 @@ async function downloadLetterImage() {
     canvas.width = width;
     canvas.height = height;
 
-    context.drawImage(collage, 0, 0, width, height);
+    drawLetterBeachBackground(context, width, height);
 
-    drawRoundedRect(context, contentX - 16, contentY - 12, contentWidth + 32, contentHeight + 24, 24);
-    context.fillStyle = "rgba(255, 255, 255, 0.62)";
+    exportEntries.forEach((entry, photoIndex) => {
+      const photo = entry.layout;
+      const image = loadedImages[photoIndex];
+      const x = parseCssPercent(photo.left, width);
+      const y = parseCssPercent(photo.top, height);
+      const cardWidth = getCanvasPhotoWidth(photo.width, width);
+      const cardHeight = cardWidth / parseFloat(photo.ratio);
+      const rotation = (parseFloat(photo.rotation) * Math.PI) / 180;
+
+      context.save();
+      context.translate(x, y);
+      context.rotate(rotation);
+      context.shadowColor = "rgba(83, 58, 30, 0.22)";
+      context.shadowBlur = 30;
+      context.shadowOffsetY = 18;
+      drawRoundedRect(context, -cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight, 14);
+      context.fillStyle = "rgba(255, 255, 255, 0.92)";
+      context.fill();
+      drawRoundedRect(context, -cardWidth / 2 + 8, -cardHeight / 2 + 8, cardWidth - 16, cardHeight - 16, 10);
+      context.clip();
+      context.shadowColor = "transparent";
+
+      if (image) {
+        drawImageCover(context, image, -cardWidth / 2 + 8, -cardHeight / 2 + 8, cardWidth - 16, cardHeight - 16);
+      } else {
+        drawMemoryPlaceholder(context, -cardWidth / 2 + 8, -cardHeight / 2 + 8, cardWidth - 16, cardHeight - 16, photoIndex);
+      }
+      context.restore();
+    });
+
+    context.shadowColor = "rgba(91, 64, 31, 0.24)";
+    context.shadowBlur = 42;
+    context.shadowOffsetY = 24;
+    drawRoundedRect(context, contentX - 18, contentY - 12, contentWidth + 36, contentHeight + 24, 28);
+    context.fillStyle = "rgba(255, 250, 238, 0.88)";
     context.fill();
+    context.shadowColor = "transparent";
 
     context.fillStyle = "#173f63";
     context.textBaseline = "alphabetic";
     context.textAlign = "right";
-    context.font = "28px Georgia, serif";
-    context.fillText("29/06", contentX + contentWidth - 30, contentY + 58);
+    context.font = `30px ${exportFont}`;
+    context.fillText("29/06", contentX + contentWidth - 34, contentY + 62);
 
     context.textAlign = "left";
-    context.font = "34px Georgia, serif";
-    context.fillText("Pau:", contentX + 28, contentY + 92);
+    context.font = `36px ${exportFont}`;
+    context.fillText("Pau:", contentX + 34, contentY + 102);
 
-    context.font = `${fontSize}px Georgia, serif`;
-    drawColumnText(lines, contentX + 28, bodyY, textColumnWidth, bodyHeight, columnGap, lineHeight);
+    context.font = `${fontSize}px ${exportFont}`;
+    drawColumnText(lines, contentX + 34, bodyY, textColumnWidth, bodyHeight, columnGap, lineHeight);
 
-    context.textAlign = "center";
-    context.font = "28px Georgia, serif";
-    context.fillText("Feliz cumpleaños, Pau.", width / 2, contentY + contentHeight - 34);
-
-    await saveCanvasAsImage(canvas, "carta-para-pau.png");
+    await saveCanvasAsImage(canvas, "te_amo.png");
   } finally {
     downloadLetter.textContent = originalButtonText;
     downloadLetter.disabled = false;
@@ -860,22 +1455,6 @@ function drawMemoryPlaceholder(context, x, y, width, height, indexValue) {
   context.fillRect(x, y, width, height);
 }
 
-function drawMemoryFlower(context, x, y, size, color) {
-  context.save();
-  context.fillStyle = color;
-  for (let i = 0; i < 6; i += 1) {
-    const angle = (i / 6) * Math.PI * 2;
-    context.beginPath();
-    context.arc(x + Math.cos(angle) * size * 0.6, y + Math.sin(angle) * size * 0.6, size * 0.34, 0, Math.PI * 2);
-    context.fill();
-  }
-  context.fillStyle = "rgba(255, 255, 255, 0.92)";
-  context.beginPath();
-  context.arc(x, y, size * 0.24, 0, Math.PI * 2);
-  context.fill();
-  context.restore();
-}
-
 async function downloadMemoryImage() {
   const originalButtonText = downloadMemory.textContent;
   downloadMemory.textContent = "...";
@@ -886,29 +1465,35 @@ async function downloadMemoryImage() {
     const context = canvas.getContext("2d");
     const width = 1600;
     const height = 900;
-    const loadedImages = await Promise.all(memoryPhotoSources.map((src) => (src ? loadCanvasImage(src).catch(() => null) : null)));
+    const [starBackground, loadedImages] = await Promise.all([
+      loadCanvasImage("media/fondo-estrellas.jpeg?v=20260623-36").catch(() => null),
+      Promise.all(memoryPhotoSources.map((src) => (src ? loadCanvasImage(src).catch(() => null) : null)))
+    ]);
 
     canvas.width = width;
     canvas.height = height;
 
-    const background = context.createLinearGradient(0, 0, width, height);
-    background.addColorStop(0, "#f4ead7");
-    background.addColorStop(0.52, "#fbf6eb");
-    background.addColorStop(1, "#eaf7ff");
-    context.fillStyle = background;
+    if (starBackground) {
+      drawImageCover(context, starBackground, 0, 0, width, height);
+    } else {
+      context.fillStyle = "#03070e";
+      context.fillRect(0, 0, width, height);
+    }
+
+    const seaGlow = context.createRadialGradient(width * 0.76, height * 0.08, 0, width * 0.76, height * 0.08, width * 0.62);
+    seaGlow.addColorStop(0, "rgba(58, 138, 214, 0.34)");
+    seaGlow.addColorStop(0.48, "rgba(10, 32, 64, 0.2)");
+    seaGlow.addColorStop(1, "rgba(3, 7, 14, 0)");
+    context.fillStyle = seaGlow;
     context.fillRect(0, 0, width, height);
 
-    context.strokeStyle = "rgba(70, 143, 190, 0.2)";
+    context.fillStyle = "rgba(0, 0, 0, 0.18)";
+    context.fillRect(0, 0, width, height);
+
+    context.strokeStyle = "rgba(174, 232, 255, 0.24)";
     context.lineWidth = 2;
     drawRoundedRect(context, 36, 36, width - 72, height - 72, 34);
     context.stroke();
-
-    for (let i = 0; i < 44; i += 1) {
-      const edge = i % 4;
-      const x = edge === 0 ? 54 + (i * 53) % (width - 108) : edge === 1 ? width - 52 : edge === 2 ? 54 + (i * 47) % (width - 108) : 52;
-      const y = edge === 0 ? 54 : edge === 1 ? 54 + (i * 37) % (height - 108) : edge === 2 ? height - 54 : 54 + (i * 41) % (height - 108);
-      drawMemoryFlower(context, x, y, 11 + (i % 4) * 2, ["#8fd6ff", "#b7a8ff", "#d8f2ff", "#f7fbff"][i % 4]);
-    }
 
     memoryPhotoLayout.forEach((photo, photoIndex) => {
       const x = (parseFloat(photo.left) / 100) * width;
@@ -921,10 +1506,13 @@ async function downloadMemoryImage() {
       context.save();
       context.translate(x, y);
       context.rotate(rotation);
-      context.shadowColor = "rgba(92, 104, 96, 0.24)";
-      context.shadowBlur = 24;
-      context.shadowOffsetY = 12;
-      drawRoundedRect(context, -cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight, 14);
+      context.shadowColor = "rgba(92, 104, 96, 0.2)";
+      context.shadowBlur = 18;
+      context.shadowOffsetY = 9;
+      drawRoundedRect(context, -cardWidth / 2 - 7, -cardHeight / 2 - 7, cardWidth + 14, cardHeight + 14, 16);
+      context.fillStyle = "rgba(255, 255, 255, 0.9)";
+      context.fill();
+      drawRoundedRect(context, -cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight, 12);
       context.clip();
       context.shadowColor = "transparent";
 
@@ -934,9 +1522,19 @@ async function downloadMemoryImage() {
         drawMemoryPlaceholder(context, -cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight, photoIndex);
       }
       context.restore();
+
+      if (photoIndex % 4 === 0) {
+        context.save();
+        context.translate(x, y - cardHeight / 2 - 8);
+        context.rotate(rotation - 0.04);
+        context.fillStyle = "rgba(225, 244, 255, 0.58)";
+        drawRoundedRect(context, -cardWidth * 0.18, -5, cardWidth * 0.36, 10, 3);
+        context.fill();
+        context.restore();
+      }
     });
 
-    await saveCanvasAsImage(canvas, "recuerdos-vacaciones-pau.png");
+    await saveCanvasAsImage(canvas, "las_mejores_vacaciones.png");
   } finally {
     downloadMemory.textContent = originalButtonText;
     downloadMemory.disabled = false;
@@ -948,36 +1546,74 @@ function openLetterFromMemories(event) {
     event.preventDefault();
     event.stopPropagation();
   }
-  completeMemoryAnimation();
-  showLetterScene();
+  startTravelTransition();
 }
 
-openLetter.addEventListener("click", () => showMemoryScene());
-openFinalLetter.addEventListener("click", openLetterFromMemories);
-openFinalLetter.addEventListener("pointerup", openLetterFromMemories);
-openFinalLetter.addEventListener("touchend", openLetterFromMemories, { passive: false });
+openLetter.addEventListener("click", () => runSceneTransition(() => showMemoryScene()));
+openFinalLetter.addEventListener("click", (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+  openLetterFromMemories();
+});
 function handleMemorySceneAdvance(event) {
   if (event.target.closest("#downloadMemory")) {
     return;
   }
 
-  if (event.target.closest("#openFinalLetter") || memoriesCompleted) {
-    openLetterFromMemories(event);
+  if (event.target.closest("#openFinalLetter")) {
+    event.preventDefault();
+    event.stopPropagation();
+    openLetterFromMemories();
+    return;
+  }
+
+  const memoryPhoto = findMemoryPhotoAtPoint(event.clientX, event.clientY) || event.target.closest(".memory-photo");
+  if (memoryPhoto) {
+    event.preventDefault();
+    event.stopPropagation();
+    openPhotoViewer(memoryPhoto.dataset.src);
+    return;
   }
 }
 memoryScene.addEventListener("click", handleMemorySceneAdvance);
-memoryScene.addEventListener("pointerup", handleMemorySceneAdvance);
-memoryScene.addEventListener("touchend", handleMemorySceneAdvance, { passive: false });
 skipTyping.addEventListener("click", completeLetter);
 rereadLetter.addEventListener("click", rereadCurrentLetter);
 downloadLetter.addEventListener("click", downloadLetterImage);
 downloadMemory.addEventListener("click", downloadMemoryImage);
-viewMemories.addEventListener("click", () => showMemoryScene({ completed: true }));
-restart.addEventListener("click", showHeartScene);
+paper.addEventListener("wheel", disableTypingAutoScrollFromUser, { passive: true });
+paper.addEventListener("touchstart", disableTypingAutoScrollFromUser, { passive: true });
+paper.addEventListener("touchmove", disableTypingAutoScrollFromUser, { passive: true });
+paper.addEventListener("pointerdown", disableTypingAutoScrollFromUser, { passive: true });
+paper.addEventListener("scroll", () => {
+  if (!isProgrammaticScroll) {
+    disableTypingAutoScrollFromUser();
+  }
+}, { passive: true });
+memoryBoard.addEventListener("pointermove", updateMemoryHover);
+memoryBoard.addEventListener("pointerleave", () => setHoveredMemoryPhoto(null));
+memoryBoard.addEventListener("click", (event) => {
+  const memoryPhoto = findMemoryPhotoAtPoint(event.clientX, event.clientY) || event.target.closest(".memory-photo");
+  if (!memoryPhoto) {
+    return;
+  }
+
+  event.preventDefault();
+  event.stopPropagation();
+  openPhotoViewer(memoryPhoto.dataset.src);
+});
+photoViewerClose.addEventListener("click", closePhotoViewer);
+photoViewer.addEventListener("click", (event) => {
+  if (event.target === photoViewer) {
+    closePhotoViewer();
+  }
+});
+viewMemories.addEventListener("click", () => runSceneTransition(() => showMemoryScene({ completed: true })));
+restart.addEventListener("click", () => runSceneTransition(showHeartScene));
 audioToggle.addEventListener("click", () => {
   if (isMusicOn) {
     stopMusic();
   } else {
+    musicWasManuallyStopped = false;
     startMusic();
   }
 });
@@ -997,29 +1633,36 @@ if (window.visualViewport) {
 }
 
 window.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && photoViewer.classList.contains("is-visible")) {
+    closePhotoViewer();
+    return;
+  }
+
   if (event.key === "Enter" && heartScene.classList.contains("is-active")) {
-    showMemoryScene();
+    runSceneTransition(() => showMemoryScene());
   }
 
   if (event.key === "Enter" && memoryScene.classList.contains("is-active") && memoriesCompleted) {
-    showLetterScene();
+    startTravelTransition();
   }
 
   if (event.key === "Escape" && memoryScene.classList.contains("is-active")) {
-    showHeartScene();
+    runSceneTransition(showHeartScene);
   }
 
   if (event.key === "Escape" && letterScene.classList.contains("is-active")) {
-    showHeartScene();
+    runSceneTransition(showHeartScene);
   }
 });
 
 window.addEventListener("load", () => {
   normalizeMobileViewport();
+  startMusic({ automatic: true });
   window.setTimeout(() => {
     loader.classList.add("is-hidden");
   }, 450);
 });
 
 normalizeMobileViewport();
+armMusicAutoplayFallback();
 startDotAnimation();

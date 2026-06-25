@@ -1,6 +1,6 @@
 # Carta digital para Pau
 
-Regalo para mi hermosa novia.
+Regalo interactivo de cumpleaños con un corazón animado y una carta que aparece con efecto de máquina de escribir.
 
 ## Link publicado
 
@@ -34,7 +34,12 @@ README.md
 media/qr-carta-pau.png
 media/cancion.mp4
 media/fondo-carta.jpg
+media/fondo-estrellas.jpeg
+media/recuerdos/
+media/carta-recuerdos/
 ```
+
+No subas los archivos `.zip`; solo sirven como respaldo local y GitHub Pages no los necesita.
 
 GitHub Pages está configurado para publicar desde la rama `main` y la carpeta `/ (root)`, así que los cambios aparecerán automáticamente en el link publicado después de unos minutos.
 
