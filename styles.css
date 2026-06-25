@@ -403,7 +403,7 @@ h1 {
   background:
     linear-gradient(rgba(2, 7, 14, 0.1), rgba(2, 8, 18, 0.28)),
     radial-gradient(circle at 50% 48%, rgba(43, 118, 183, 0.18), transparent 38%),
-    url("media/fondo-estrellas.jpeg?v=20260623-39") center center / cover no-repeat,
+    url("media/fondo-estrellas.jpeg?v=20260623-40") center center / cover no-repeat,
     #03070e;
 }
 
@@ -557,7 +557,7 @@ h1 {
   background:
     radial-gradient(circle at 50% 46%, rgba(48, 135, 211, 0.22), transparent 34%),
     linear-gradient(rgba(0, 5, 12, 0.04), rgba(0, 5, 12, 0.86)),
-    url("media/fondo-estrellas.jpeg?v=20260623-39") center center / cover no-repeat,
+    url("media/fondo-estrellas.jpeg?v=20260623-40") center center / cover no-repeat,
     #02050b;
   transition: opacity 520ms ease;
 }
@@ -577,7 +577,7 @@ h1 {
   background:
     radial-gradient(circle at 52% 42%, rgba(61, 151, 223, 0.16), transparent 34%),
     linear-gradient(rgba(0, 4, 11, 0.08), rgba(0, 5, 18, 0.92)),
-    url("media/fondo-estrellas.jpeg?v=20260623-39") center center / cover no-repeat,
+    url("media/fondo-estrellas.jpeg?v=20260623-40") center center / cover no-repeat,
     #01040b;
   transition: opacity 520ms ease, visibility 520ms ease;
   contain: layout paint style;
@@ -1869,8 +1869,8 @@ body.is-traveling .qr-panel {
   }
 
   .letter-beach-photo {
-    width: clamp(54px, 7vw, 100px);
-    opacity: 0.72;
+    width: var(--width);
+    opacity: 0.82;
     box-shadow: 0 8px 18px rgba(83, 58, 30, 0.16), inset 0 0 0 3px rgba(255, 255, 255, 0.86);
   }
 
@@ -1914,9 +1914,10 @@ body.is-traveling .qr-panel {
   }
 
   .paper {
-    width: min(calc(var(--app-width) - 152px), 760px);
-    max-height: calc(var(--app-height) - 22px);
-    padding: 22px 42px 16px;
+    width: min(54vw, 560px);
+    min-width: 390px;
+    max-height: calc(var(--app-height) - 18px);
+    padding: 20px 28px 14px;
     background-size: auto, auto, 46px 100%, auto;
   }
 
@@ -1934,39 +1935,45 @@ body.is-traveling .qr-panel {
   }
 
   .letter-text {
-    min-height: 145px;
-    font-size: clamp(0.76rem, 1.85vw, 0.96rem);
-    line-height: 1.48;
+    min-height: 132px;
+    font-size: clamp(0.7rem, 1.58vw, 0.88rem);
+    line-height: 1.44;
     overflow-wrap: break-word;
   }
 
   .paper-actions {
     position: sticky;
-    bottom: -8px;
-    gap: 7px;
-    margin-top: 12px;
-    padding-top: 8px;
-    background: linear-gradient(rgba(244, 251, 255, 0), rgba(244, 251, 255, 0.94) 28%);
+    bottom: -6px;
+    gap: 5px;
+    margin-top: 9px;
+    padding-top: 6px;
+    background: linear-gradient(rgba(244, 251, 255, 0), rgba(244, 251, 255, 0.88) 35%);
   }
 
   .ghost-button {
-    min-height: 30px;
-    padding: 0 10px;
-    font-size: 0.72rem;
+    min-height: 27px;
+    padding: 0 8px;
+    font-size: 0.66rem;
   }
 
   .final-card {
-    bottom: 8px;
-    width: min(60vw, 420px);
-    padding: 9px 12px;
+    bottom: 4px;
+    width: min(44vw, 360px);
+    padding: 6px 10px;
+    background: rgba(255, 255, 255, 0.62);
   }
 
   .final-card p {
-    font-size: 1rem;
+    font-size: 0.82rem;
   }
 
   .final-card span {
-    font-size: 0.72rem;
+    font-size: 0.6rem;
+  }
+
+  .final-card small {
+    margin-top: 2px;
+    font-size: 0.42rem;
   }
 }
 

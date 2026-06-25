@@ -109,7 +109,20 @@ const rightLetterPhotoLayout = leftLetterPhotoLayout.map((photo) => ({
   left: `${100 - parseFloat(photo.left)}%`,
   rotation: `${-parseFloat(photo.rotation)}deg`
 }));
-const letterBeachPhotoLayout = [...leftLetterPhotoLayout, ...rightLetterPhotoLayout];
+const compactLeftLetterPhotoLayout = [
+  { left: "6.2%", top: "14%", width: "clamp(54px, 8.2vw, 82px)", ratio: "0.78", rotation: "-6deg", position: "center", layer: "2" },
+  { left: "16.8%", top: "18%", width: "clamp(50px, 7.4vw, 76px)", ratio: "0.92", rotation: "4deg", position: "center", layer: "3" },
+  { left: "7.4%", top: "36%", width: "clamp(52px, 7.8vw, 80px)", ratio: "0.86", rotation: "5deg", position: "center", layer: "4" },
+  { left: "17.4%", top: "47%", width: "clamp(56px, 8.6vw, 86px)", ratio: "0.74", rotation: "-5deg", position: "center", layer: "5" },
+  { left: "6.8%", top: "64%", width: "clamp(52px, 7.8vw, 80px)", ratio: "0.82", rotation: "-4deg", position: "center", layer: "3" },
+  { left: "17.2%", top: "74%", width: "clamp(50px, 7.4vw, 76px)", ratio: "0.9", rotation: "3deg", position: "center", layer: "4" },
+  { left: "10.2%", top: "88%", width: "clamp(48px, 7vw, 72px)", ratio: "0.84", rotation: "4deg", position: "center", soft: true, layer: "2" }
+];
+const compactRightLetterPhotoLayout = compactLeftLetterPhotoLayout.map((photo) => ({
+  ...photo,
+  left: `${100 - parseFloat(photo.left)}%`,
+  rotation: `${-parseFloat(photo.rotation)}deg`
+}));
 const memoryPhotoDelayStep = Math.min(0.48, Math.max(0.28, 17 / memoryPhotoSources.length));
 const memoryAnimationDuration = Math.ceil((0.55 + (memoryPhotoSources.length - 1) * memoryPhotoDelayStep + 1.8) * 1000);
 const memoryPhotoColumns = Math.min(13, Math.max(11, Math.ceil(Math.sqrt(memoryPhotoSources.length * 2.25))));
@@ -207,9 +220,7 @@ function shuffleArray(items) {
 }
 
 function getLetterBeachPhotosPerSide() {
-  const isCompact = window.matchMedia("(max-width: 960px) and (orientation: landscape)").matches;
-
-  if (isCompact) {
+  if (isCompactLetterViewport()) {
     return letterBeachCompactPerSide;
   }
 
@@ -222,6 +233,24 @@ function getLetterBeachPhotosPerSide() {
   }
 
   return letterBeachLaptopPerSide;
+}
+
+function isCompactLetterViewport() {
+  return window.matchMedia("(max-width: 960px) and (orientation: landscape)").matches;
+}
+
+function getActiveLetterPhotoLayouts() {
+  if (isCompactLetterViewport()) {
+    return {
+      left: compactLeftLetterPhotoLayout,
+      right: compactRightLetterPhotoLayout
+    };
+  }
+
+  return {
+    left: leftLetterPhotoLayout,
+    right: rightLetterPhotoLayout
+  };
 }
 
 function getRandomPhotos(count, sourcePool, excluded = new Set()) {
@@ -262,10 +291,11 @@ function hasBalancedLetterBeachSelection(perSide) {
 function renderLetterBeachPhotos(options = {}) {
   letterBeachPhotos.textContent = "";
   const fragment = document.createDocumentFragment();
+  const activeLayouts = getActiveLetterPhotoLayouts();
   const perSide = Math.min(
     getLetterBeachPhotosPerSide(),
-    leftLetterPhotoLayout.length,
-    rightLetterPhotoLayout.length
+    activeLayouts.left.length,
+    activeLayouts.right.length
   );
 
   if (options.newSelection || !hasBalancedLetterBeachSelection(perSide)) {
@@ -296,11 +326,11 @@ function renderLetterBeachPhotos(options = {}) {
   }
 
   currentLetterBeachSelection.left.slice(0, perSide).forEach((src, photoIndex) => {
-    appendPhoto(src, leftLetterPhotoLayout[photoIndex], photoIndex, "left");
+    appendPhoto(src, activeLayouts.left[photoIndex], photoIndex, "left");
   });
 
   currentLetterBeachSelection.right.slice(0, perSide).forEach((src, photoIndex) => {
-    appendPhoto(src, rightLetterPhotoLayout[photoIndex], photoIndex + perSide, "right");
+    appendPhoto(src, activeLayouts.right[photoIndex], photoIndex + perSide, "right");
   });
 
   letterBeachPhotos.appendChild(fragment);
@@ -1328,10 +1358,11 @@ async function downloadLetterImage() {
   }
 
   try {
+    const activeLayouts = getActiveLetterPhotoLayouts();
     const exportPerSide = Math.min(
       getLetterBeachPhotosPerSide(),
-      leftLetterPhotoLayout.length,
-      rightLetterPhotoLayout.length
+      activeLayouts.left.length,
+      activeLayouts.right.length
     );
     const exportSelection = hasBalancedLetterBeachSelection(exportPerSide)
       ? {
@@ -1342,12 +1373,12 @@ async function downloadLetterImage() {
     const exportEntries = [
       ...exportSelection.left.map((src, photoIndex) => ({
         src,
-        layout: leftLetterPhotoLayout[photoIndex],
+        layout: activeLayouts.left[photoIndex],
         index: photoIndex
       })),
       ...exportSelection.right.map((src, photoIndex) => ({
         src,
-        layout: rightLetterPhotoLayout[photoIndex],
+        layout: activeLayouts.right[photoIndex],
         index: photoIndex + exportPerSide
       }))
     ];
@@ -1466,7 +1497,7 @@ async function downloadMemoryImage() {
     const width = 1600;
     const height = 900;
     const [starBackground, loadedImages] = await Promise.all([
-      loadCanvasImage("media/fondo-estrellas.jpeg?v=20260623-36").catch(() => null),
+      loadCanvasImage("media/fondo-estrellas.jpeg?v=20260623-40").catch(() => null),
       Promise.all(memoryPhotoSources.map((src) => (src ? loadCanvasImage(src).catch(() => null) : null)))
     ]);
 
