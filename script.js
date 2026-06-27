@@ -1,4 +1,25 @@
-const letter = `liz rata aqui va la carta liz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la cartaliz rata aqui va la carta`;
+const letter = `enamorarme de ti es lo más fácil que he hecho en mi vida. nada me importa en esta vida más que tú, y cada día que pasa soy más consciente de eso. te amé el día que te conocí, te amo ahora mismo y te amaré el resto de mi vida.
+
+eres mi lugar seguro, mi pensamiento bonito en los días difíciles y la razón por la que todo se siente más ligero. no sé cómo explicarlo sin quedarme corto, pero estar contigo me hace sentir que encontré algo que no quiero perder nunca. gracias por existir, por quedarte, por hacerme tan feliz sin siquiera intentarlo. te elegiría una y mil veces, en esta vida y en cualquiera donde vuelva a encontrarte.
+
+la etapa de tener una novia de la paz y pasar las mejores vacaciones de su vida recomiendo no saltársela. esto empezó como un pensamiento en la playa, como un tweet cualquiera, pero terminó abriéndome las puertas para seguir esta carta que ya tenía para ti. gracias por todo lo que me hiciste vivir, por cada momento, por cada risa y por hacer de esta experiencia algo que voy a guardar para siempre en mi memoria.
+
+creía que no podía pasármela mejor en mi vida, pero estar contigo me demostró que cada vez que compartimos más tiempo juntos, superas mis expectativas de una forma que ni yo sabía que era posible. no importa qué pase, esta experiencia será inolvidable para mí, porque la viví contigo.
+
+hoy, en tu cumpleaños, no puedo evitar sentirme afortunado de poder celebrar tu vida. porque un día como hoy nació la persona que se volvió mi todo, la niña que me cambió los días, la forma de ver el amor y hasta la manera en la que entiendo la felicidad. paulina, mi amor. ojalá pudiera darte en palabras todo lo que significas para mí, pero se que voy a pasar mi vida intentando demostrártelo.
+
+deseo que este nuevo año de tu vida esté lleno de momentos bonitos, de sueños cumplidos, de risas que te salgan del alma y de todo el amor que mereces. yo quiero estar ahí para verte crecer, abrazarte en tus días buenos y también en los difíciles, recordarte lo increíble que eres cuando se te olvide y hacerte sentir amada todos los días, no solo hoy.
+
+eres la mejor mujer que he conocido en mi vida. eres mi mejor amiga, mi compañera y la mejor novia que la vida me pudo otorgar. de verdad, esto que escribo es apenas el 1 por ciento de todo lo que siento por ti, y estoy seguro de que este amor seguirá creciendo con el tiempo. celebraré hoy y todos los días de mi vida tu existencia, porque mereces todo lo bonito de la vida, paulina. genuinamente te amo.
+
+gracias por ser tú, por tu forma de querer, por tu sonrisa, por tu corazón tan bonito y por hacer de mi vida un lugar mucho más feliz. hoy celebro tu cumpleaños, pero también celebro la suerte inmensa que tengo de coincidir contigo, de poder acompañarte y de amar a una persona tan increíble como tú.
+
+me siento profundamente orgulloso de ti, de la persona que eres, de todo lo que has logrado y de la forma tan bonita en la que iluminas la vida de quienes tienen la suerte de conocerte. gracias por dejarme estar a tu lado, por permitirme amarte y por hacerme sentir que el amor puede ser tan real, tan tranquilo y tan inmenso.
+
+hoy y siempre voy a estar agradecido contigo, con la vida y con todo lo que nos puso en el mismo camino. feliz cumpleaños, mi amor. te amo más de lo que puedo escribir y más de lo que alguna vez pensé amar a alguien.
+
+Con amor,
+Adrián`;
 
 const heartScene = document.querySelector("#heartScene");
 const memoryScene = document.querySelector("#memoryScene");
@@ -11,17 +32,22 @@ const skipTyping = document.querySelector("#skipTyping");
 const rereadLetter = document.querySelector("#rereadLetter");
 const downloadLetter = document.querySelector("#downloadLetter");
 const downloadMemory = document.querySelector("#downloadMemory");
-const viewMemories = document.querySelector("#viewMemories");
-const restart = document.querySelector("#restart");
 const cursor = document.querySelector("#cursor");
 const dotCanvas = document.querySelector("#dotCanvas");
 const paper = document.querySelector(".paper");
 const envelope = document.querySelector("#envelope");
-const audioToggle = document.querySelector("#audioToggle");
 const song = document.querySelector("#song");
 const finalBloom = document.querySelector("#finalBloom");
 const finalCard = document.querySelector("#finalCard");
-const qrToggle = document.querySelector("#qrToggle");
+const floatingMenu = document.querySelector("#floatingMenu");
+const menuToggle = document.querySelector("#menuToggle");
+const menuPanel = document.querySelector("#menuPanel");
+const menuQr = document.querySelector("#menuQr");
+const menuMusic = document.querySelector("#menuMusic");
+const volumeControl = document.querySelector("#volumeControl");
+const menuHeart = document.querySelector("#menuHeart");
+const menuMemories = document.querySelector("#menuMemories");
+const menuLetter = document.querySelector("#menuLetter");
 const qrPanel = document.querySelector("#qrPanel");
 const memoryBoard = document.querySelector("#memoryBoard");
 const letterBeachPhotos = document.querySelector("#letterBeachPhotos");
@@ -156,6 +182,8 @@ let animationFrame = null;
 let introIsReady = false;
 let isMusicOn = false;
 let musicWasManuallyStopped = false;
+let musicVolume = Number(volumeControl.value) / 100;
+let letterHasFinished = false;
 let finalBloomShown = false;
 let memoriesCompleted = false;
 let hoveredMemoryPhoto = null;
@@ -452,9 +480,38 @@ function completeMemoryAnimation() {
   window.requestAnimationFrame(refreshMemoryPhotoRects);
 }
 
-function updateMusicButton(isOn) {
-  audioToggle.setAttribute("aria-pressed", String(isOn));
-  audioToggle.textContent = isOn ? "Música ON" : "Música";
+function updateGlobalMenu() {
+  menuMusic.setAttribute("aria-pressed", String(isMusicOn));
+  menuMusic.textContent = isMusicOn ? "Música ON" : "Música OFF";
+  [menuHeart, menuMemories, menuLetter].forEach((button) => {
+    button.disabled = !letterHasFinished;
+  });
+}
+
+function openGlobalMenu() {
+  floatingMenu.classList.add("is-open");
+  menuToggle.setAttribute("aria-expanded", "true");
+  menuToggle.setAttribute("aria-label", "Cerrar menú");
+}
+
+function closeGlobalMenu() {
+  floatingMenu.classList.remove("is-open");
+  menuToggle.setAttribute("aria-expanded", "false");
+  menuToggle.setAttribute("aria-label", "Abrir menú");
+}
+
+function toggleGlobalMenu() {
+  if (floatingMenu.classList.contains("is-open")) {
+    closeGlobalMenu();
+  } else {
+    updateGlobalMenu();
+    openGlobalMenu();
+  }
+}
+
+function markLetterFinished() {
+  letterHasFinished = true;
+  updateGlobalMenu();
 }
 
 function startMusic(options = {}) {
@@ -468,31 +525,31 @@ function startMusic(options = {}) {
     return Promise.resolve(false);
   }
 
-  song.volume = 0.72;
+  song.volume = musicVolume;
   const playPromise = song.play();
 
   if (playPromise) {
     return playPromise
       .then(() => {
         isMusicOn = true;
-        updateMusicButton(true);
+        updateGlobalMenu();
         return true;
       })
       .catch(() => {
         isMusicOn = false;
-        updateMusicButton(false);
+        updateGlobalMenu();
         return false;
       });
   }
 
   isMusicOn = true;
-  updateMusicButton(true);
+  updateGlobalMenu();
   return Promise.resolve(true);
 }
 
 function armMusicAutoplayFallback() {
   const tryAfterInteraction = (event) => {
-    if (event.target.closest("#audioToggle")) {
+    if (event.target.closest("#menuMusic") || event.target.closest("#volumeControl")) {
       return;
     }
 
@@ -552,7 +609,7 @@ function runViewportNormalization() {
 function stopMusic() {
   isMusicOn = false;
   musicWasManuallyStopped = true;
-  updateMusicButton(false);
+  updateGlobalMenu();
   song.pause();
 }
 
@@ -602,7 +659,7 @@ function startTravelTransition() {
     travelTransition.classList.add("is-active");
   });
 
-  const duration = reducedMotionQuery.matches ? 900 : shouldUseSimpleTravelTransition() ? 3400 : 6400;
+  const duration = reducedMotionQuery.matches ? 900 : shouldUseSimpleTravelTransition() ? 3600 : 7200;
   travelTransitionTimer = window.setTimeout(finishTravelTransition, duration);
 }
 
@@ -858,25 +915,49 @@ function startDotAnimation() {
   animationFrame = window.requestAnimationFrame(drawDotAnimation);
 }
 
-function showLetterScene() {
+function showLetterScene(options = {}) {
   if (letterScene.classList.contains("is-active") && !memoryScene.classList.contains("is-active")) {
     return;
   }
 
-  renderLetterBeachPhotos({ newSelection: true });
+  const shouldShowCompleted = Boolean(options.completed || letterHasFinished);
+
+  renderLetterBeachPhotos({ newSelection: !hasBalancedLetterBeachSelection(getLetterBeachPhotosPerSide()) });
   startMusic();
   window.cancelAnimationFrame(animationFrame);
   window.clearTimeout(envelopeTimer);
   window.clearTimeout(typingStartTimer);
   window.clearTimeout(memoryTimer);
+  stopTyping();
+  resetTypingAutoScroll();
   completeMemoryAnimation();
   heartScene.classList.remove("is-active");
   memoryScene.classList.remove("is-active");
   letterScene.classList.add("is-active");
-  letterScene.classList.remove("is-open");
   letterScene.removeAttribute("aria-hidden");
   heartScene.setAttribute("aria-hidden", "true");
   memoryScene.setAttribute("aria-hidden", "true");
+
+  if (shouldShowCompleted) {
+    letterScene.classList.add("is-open");
+    index = letter.length;
+    renderFullLetter();
+    cursor.hidden = true;
+    markProgrammaticPaperScroll();
+    paper.scrollTop = 0;
+    showFinalBloom();
+    updateGlobalMenu();
+    return;
+  }
+
+  letterScene.classList.remove("is-open");
+  index = 0;
+  letterText.textContent = "";
+  cursor.hidden = false;
+  finalBloomShown = false;
+  finalBloom.classList.remove("is-visible");
+  finalBloom.textContent = "";
+  finalCard.classList.remove("is-visible");
   envelopeTimer = window.setTimeout(() => {
     letterScene.classList.add("is-open");
     typingStartTimer = window.setTimeout(startTyping, 850);
@@ -1083,6 +1164,7 @@ function typeNextCharacter(now) {
     keepTypedTextVisible(now);
     stopTyping();
     cursor.hidden = true;
+    markLetterFinished();
     showFinalBloom();
     return;
   }
@@ -1097,6 +1179,7 @@ function completeLetter() {
   renderFullLetter();
   cursor.hidden = true;
   paper.scrollTop = 0;
+  markLetterFinished();
   showFinalBloom();
 }
 
@@ -1183,6 +1266,135 @@ function drawRoundedRect(context, x, y, width, height, radius) {
   context.lineTo(x, y + safeRadius);
   context.quadraticCurveTo(x, y, x + safeRadius, y);
   context.closePath();
+}
+
+function drawPaperShape(context, x, y, width, height) {
+  const points = [
+    [0.02, 0.03],
+    [0.1, 0.01],
+    [0.22, 0.03],
+    [0.36, 0.015],
+    [0.52, 0.03],
+    [0.68, 0.01],
+    [0.82, 0.03],
+    [0.98, 0.02],
+    [0.965, 0.18],
+    [0.98, 0.34],
+    [0.965, 0.53],
+    [0.98, 0.7],
+    [0.96, 0.97],
+    [0.84, 0.99],
+    [0.66, 0.975],
+    [0.5, 0.99],
+    [0.32, 0.97],
+    [0.16, 0.99],
+    [0.02, 0.96],
+    [0.035, 0.78],
+    [0.02, 0.6],
+    [0.035, 0.42],
+    [0.02, 0.24]
+  ];
+
+  context.beginPath();
+  points.forEach(([pointX, pointY], pointIndex) => {
+    const targetX = x + pointX * width;
+    const targetY = y + pointY * height;
+
+    if (pointIndex === 0) {
+      context.moveTo(targetX, targetY);
+    } else {
+      context.lineTo(targetX, targetY);
+    }
+  });
+  context.closePath();
+}
+
+function getSceneExportMetrics(scene, preferredWidth = 1920) {
+  const sceneRect = scene.getBoundingClientRect();
+  const safeWidth = Math.max(1, sceneRect.width || window.innerWidth || 16);
+  const safeHeight = Math.max(1, sceneRect.height || window.innerHeight || 9);
+  const width = preferredWidth;
+  const height = Math.round(width * (safeHeight / safeWidth));
+
+  return {
+    sceneRect,
+    width,
+    height,
+    scaleX: width / safeWidth,
+    scaleY: height / safeHeight
+  };
+}
+
+function getElementCenter(element, sceneRect, scaleX, scaleY) {
+  const rect = element.getBoundingClientRect();
+
+  return {
+    x: (rect.left + rect.width / 2 - sceneRect.left) * scaleX,
+    y: (rect.top + rect.height / 2 - sceneRect.top) * scaleY,
+    rect
+  };
+}
+
+function getCssNumber(element, propertyName, fallback = 0) {
+  const value = element.style.getPropertyValue(propertyName) || getComputedStyle(element).getPropertyValue(propertyName);
+  const parsed = parseFloat(value);
+
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function getPhotoRotation(element) {
+  const rotationValue = element.style.getPropertyValue("--rotation") || "0deg";
+
+  return (parseFloat(rotationValue) || 0) * Math.PI / 180;
+}
+
+function drawPhotoFromElement(context, image, element, sceneRect, scaleX, scaleY, options = {}) {
+  const { x, y } = getElementCenter(element, sceneRect, scaleX, scaleY);
+  const baseWidth = element.offsetWidth * scaleX;
+  const baseHeight = element.offsetHeight * scaleY;
+  const rotation = getPhotoRotation(element);
+  const radius = options.radius || Math.max(10, Math.min(baseWidth, baseHeight) * 0.065);
+  const padding = options.padding ?? getCssNumber(element, "padding-left", 0) * ((scaleX + scaleY) / 2);
+  const opacity = options.opacity ?? parseFloat(getComputedStyle(element).opacity || "1");
+
+  context.save();
+  context.globalAlpha = Number.isFinite(opacity) ? opacity : 1;
+  context.translate(x, y);
+  context.rotate(rotation);
+  context.shadowColor = options.shadowColor || "rgba(58, 80, 94, 0.2)";
+  context.shadowBlur = options.shadowBlur || 24;
+  context.shadowOffsetY = options.shadowOffsetY || 12;
+
+  drawRoundedRect(context, -baseWidth / 2, -baseHeight / 2, baseWidth, baseHeight, radius);
+  context.fillStyle = options.background || "rgba(255, 255, 255, 0.9)";
+  context.fill();
+
+  const imageX = -baseWidth / 2 + padding;
+  const imageY = -baseHeight / 2 + padding;
+  const imageWidth = baseWidth - padding * 2;
+  const imageHeight = baseHeight - padding * 2;
+  context.shadowColor = "transparent";
+  drawRoundedRect(context, imageX, imageY, imageWidth, imageHeight, Math.max(6, radius - padding));
+  context.clip();
+
+  if (image) {
+    drawImageCover(context, image, imageX, imageY, imageWidth, imageHeight);
+  } else {
+    drawMemoryPlaceholder(context, imageX, imageY, imageWidth, imageHeight, options.index || 0);
+  }
+
+  context.restore();
+
+  if (options.tape) {
+    context.save();
+    context.globalAlpha = opacity;
+    context.translate(x, y - baseHeight / 2 - options.tapeOffset * scaleY);
+    context.rotate(rotation - 0.04);
+    context.fillStyle = options.tapeColor || "rgba(225, 244, 255, 0.58)";
+    drawRoundedRect(context, -baseWidth * 0.18, -5 * scaleY, baseWidth * 0.36, 10 * scaleY, 3 * scaleY);
+    context.fill();
+    context.restore();
+  }
 }
 
 function drawSandTexture(context, width, height) {
@@ -1358,44 +1570,37 @@ async function downloadLetterImage() {
   }
 
   try {
-    const activeLayouts = getActiveLetterPhotoLayouts();
-    const exportPerSide = Math.min(
-      getLetterBeachPhotosPerSide(),
-      activeLayouts.left.length,
-      activeLayouts.right.length
-    );
-    const exportSelection = hasBalancedLetterBeachSelection(exportPerSide)
-      ? {
-        left: currentLetterBeachSelection.left.slice(0, exportPerSide),
-        right: currentLetterBeachSelection.right.slice(0, exportPerSide)
-      }
-      : buildBalancedLetterBeachSelection(exportPerSide);
-    const exportEntries = [
-      ...exportSelection.left.map((src, photoIndex) => ({
-        src,
-        layout: activeLayouts.left[photoIndex],
-        index: photoIndex
-      })),
-      ...exportSelection.right.map((src, photoIndex) => ({
-        src,
-        layout: activeLayouts.right[photoIndex],
-        index: photoIndex + exportPerSide
-      }))
-    ];
+    if (letterText.textContent !== letter) {
+      completeLetter();
+    }
+
+    if (!letterBeachPhotos.children.length) {
+      renderLetterBeachPhotos();
+    }
+
+    const exportEntries = Array.from(letterBeachPhotos.querySelectorAll(".letter-beach-photo")).map((photo, photoIndex) => ({
+      element: photo,
+      src: photo.querySelector("img")?.getAttribute("src") || "",
+      index: photoIndex
+    }));
     const loadedImages = await Promise.all(
       exportEntries.map((entry) => loadCanvasImage(entry.src).catch(() => null))
     );
-    const width = 1920;
-    const height = 1080;
-    const contentWidth = width * 0.43;
-    const contentHeight = height * 0.8;
-    const contentX = (width - contentWidth) / 2;
-    const contentY = height * 0.11;
-    const columnGap = width * 0.022;
-    const columnWidth = (contentWidth - columnGap) / 2;
+    const exportMetrics = getSceneExportMetrics(letterScene, 1920);
+    const { sceneRect, width, height, scaleX, scaleY } = exportMetrics;
+    const paperRect = paper.getBoundingClientRect();
+    const contentX = (paperRect.left - sceneRect.left) * scaleX;
+    const contentY = (paperRect.top - sceneRect.top) * scaleY;
+    const contentWidth = paperRect.width * scaleX;
+    const contentHeight = paperRect.height * scaleY;
+    const paperPaddingX = Math.max(34, contentWidth * 0.075);
+    const paperPaddingTop = Math.max(42, contentHeight * 0.075);
+    const paperPaddingBottom = Math.max(36, contentHeight * 0.06);
+    const columnGap = Math.max(28, contentWidth * 0.055);
+    const columnWidth = (contentWidth - paperPaddingX * 2 - columnGap) / 2;
     const textColumnWidth = columnWidth - 24;
-    const bodyY = contentY + height * 0.145;
-    const bodyHeight = contentHeight - height * 0.19;
+    const bodyY = contentY + paperPaddingTop + contentHeight * 0.1;
+    const bodyHeight = contentHeight - paperPaddingTop - paperPaddingBottom - contentHeight * 0.08;
     const maxUnitsPerPage = 2 * bodyHeight;
     let fontSize = 26;
     let lineHeight = 36;
@@ -1420,55 +1625,57 @@ async function downloadLetterImage() {
     drawLetterBeachBackground(context, width, height);
 
     exportEntries.forEach((entry, photoIndex) => {
-      const photo = entry.layout;
       const image = loadedImages[photoIndex];
-      const x = parseCssPercent(photo.left, width);
-      const y = parseCssPercent(photo.top, height);
-      const cardWidth = getCanvasPhotoWidth(photo.width, width);
-      const cardHeight = cardWidth / parseFloat(photo.ratio);
-      const rotation = (parseFloat(photo.rotation) * Math.PI) / 180;
-
-      context.save();
-      context.translate(x, y);
-      context.rotate(rotation);
-      context.shadowColor = "rgba(83, 58, 30, 0.22)";
-      context.shadowBlur = 30;
-      context.shadowOffsetY = 18;
-      drawRoundedRect(context, -cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight, 14);
-      context.fillStyle = "rgba(255, 255, 255, 0.92)";
-      context.fill();
-      drawRoundedRect(context, -cardWidth / 2 + 8, -cardHeight / 2 + 8, cardWidth - 16, cardHeight - 16, 10);
-      context.clip();
-      context.shadowColor = "transparent";
-
-      if (image) {
-        drawImageCover(context, image, -cardWidth / 2 + 8, -cardHeight / 2 + 8, cardWidth - 16, cardHeight - 16);
-      } else {
-        drawMemoryPlaceholder(context, -cardWidth / 2 + 8, -cardHeight / 2 + 8, cardWidth - 16, cardHeight - 16, photoIndex);
-      }
-      context.restore();
+      drawPhotoFromElement(context, image, entry.element, sceneRect, scaleX, scaleY, {
+        index: photoIndex,
+        padding: 0,
+        radius: 13 * ((scaleX + scaleY) / 2),
+        background: "rgba(255, 255, 255, 0.9)",
+        shadowColor: "rgba(83, 58, 30, 0.18)",
+        shadowBlur: 28 * ((scaleX + scaleY) / 2),
+        shadowOffsetY: 14 * scaleY,
+        tape: true,
+        tapeOffset: -4,
+        tapeColor: "rgba(232, 247, 255, 0.55)"
+      });
     });
 
-    context.shadowColor = "rgba(91, 64, 31, 0.24)";
-    context.shadowBlur = 42;
-    context.shadowOffsetY = 24;
-    drawRoundedRect(context, contentX - 18, contentY - 12, contentWidth + 36, contentHeight + 24, 28);
-    context.fillStyle = "rgba(255, 250, 238, 0.88)";
+    context.save();
+    context.shadowColor = "rgba(111, 82, 45, 0.24)";
+    context.shadowBlur = 58 * ((scaleX + scaleY) / 2);
+    context.shadowOffsetY = 24 * scaleY;
+    drawPaperShape(context, contentX, contentY, contentWidth, contentHeight);
+    context.fillStyle = "rgba(255, 250, 240, 0.92)";
     context.fill();
     context.shadowColor = "transparent";
+    drawPaperShape(context, contentX, contentY, contentWidth, contentHeight);
+    context.clip();
+
+    const paperGlow = context.createRadialGradient(contentX + contentWidth * 0.15, contentY + contentHeight * 0.18, 0, contentX + contentWidth * 0.15, contentY + contentHeight * 0.18, contentWidth * 0.46);
+    paperGlow.addColorStop(0, "rgba(255, 255, 255, 0.7)");
+    paperGlow.addColorStop(1, "rgba(255, 255, 255, 0)");
+    context.fillStyle = paperGlow;
+    context.fillRect(contentX, contentY, contentWidth, contentHeight);
+
+    context.fillStyle = "rgba(45, 128, 190, 0.08)";
+    for (let lineX = contentX; lineX <= contentX + contentWidth; lineX += 54 * scaleX) {
+      context.fillRect(lineX, contentY, Math.max(1, scaleX), contentHeight);
+    }
+
+    context.restore();
 
     context.fillStyle = "#173f63";
     context.textBaseline = "alphabetic";
     context.textAlign = "right";
-    context.font = `30px ${exportFont}`;
-    context.fillText("29/06", contentX + contentWidth - 34, contentY + 62);
+    context.font = `${Math.max(23, Math.min(34, contentWidth * 0.04))}px ${exportFont}`;
+    context.fillText("29/06", contentX + contentWidth - paperPaddingX * 0.78, contentY + paperPaddingTop * 0.85);
 
     context.textAlign = "left";
-    context.font = `36px ${exportFont}`;
-    context.fillText("Pau:", contentX + 34, contentY + 102);
+    context.font = `${Math.max(28, Math.min(42, contentWidth * 0.052))}px ${exportFont}`;
+    context.fillText("Pau:", contentX + paperPaddingX, contentY + paperPaddingTop * 1.28);
 
     context.font = `${fontSize}px ${exportFont}`;
-    drawColumnText(lines, contentX + 34, bodyY, textColumnWidth, bodyHeight, columnGap, lineHeight);
+    drawColumnText(lines, contentX + paperPaddingX, bodyY, textColumnWidth, bodyHeight, columnGap, lineHeight);
 
     await saveCanvasAsImage(canvas, "te_amo.png");
   } finally {
@@ -1492,13 +1699,20 @@ async function downloadMemoryImage() {
   downloadMemory.disabled = true;
 
   try {
+    completeMemoryAnimation();
+
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
-    const width = 1600;
-    const height = 900;
+    const exportMetrics = getSceneExportMetrics(memoryScene, 1920);
+    const { sceneRect, width, height, scaleX, scaleY } = exportMetrics;
+    const memoryPhotoElements = Array.from(memoryBoard.querySelectorAll(".memory-photo"));
+    const phrase = memoryScene.querySelector(".memory-phrase");
     const [starBackground, loadedImages] = await Promise.all([
-      loadCanvasImage("media/fondo-estrellas.jpeg?v=20260623-40").catch(() => null),
-      Promise.all(memoryPhotoSources.map((src) => (src ? loadCanvasImage(src).catch(() => null) : null)))
+      loadCanvasImage("media/fondo-estrellas.jpeg?v=20260623-43").catch(() => null),
+      Promise.all(memoryPhotoElements.map((photo) => {
+        const src = photo.dataset.src || photo.querySelector("img")?.getAttribute("src");
+        return src ? loadCanvasImage(src).catch(() => null) : null;
+      }))
     ]);
 
     canvas.width = width;
@@ -1521,49 +1735,50 @@ async function downloadMemoryImage() {
     context.fillStyle = "rgba(0, 0, 0, 0.18)";
     context.fillRect(0, 0, width, height);
 
-    context.strokeStyle = "rgba(174, 232, 255, 0.24)";
-    context.lineWidth = 2;
-    drawRoundedRect(context, 36, 36, width - 72, height - 72, 34);
-    context.stroke();
-
-    memoryPhotoLayout.forEach((photo, photoIndex) => {
-      const x = (parseFloat(photo.left) / 100) * width;
-      const y = (parseFloat(photo.top) / 100) * height;
-      const cardWidth = Math.min(200, Math.max(128, width / (memoryPhotoColumns + 1.15)));
-      const cardHeight = cardWidth / parseFloat(photo.ratio);
-      const rotation = (parseFloat(photo.rotation) * Math.PI) / 180;
+    memoryPhotoElements.forEach((photo, photoIndex) => {
       const image = loadedImages[photoIndex];
+      drawPhotoFromElement(context, image, photo, sceneRect, scaleX, scaleY, {
+        index: photoIndex,
+        radius: 13 * ((scaleX + scaleY) / 2),
+        background: "rgba(246, 252, 255, 0.9)",
+        shadowColor: "rgba(92, 104, 96, 0.2)",
+        shadowBlur: 24 * ((scaleX + scaleY) / 2),
+        shadowOffsetY: 12 * scaleY,
+        tape: true,
+        tapeOffset: 8
+      });
+    });
+
+    if (phrase) {
+      const phraseRect = phrase.getBoundingClientRect();
+      const phraseStyle = getComputedStyle(phrase);
+      const phraseX = (phraseRect.left - sceneRect.left) * scaleX;
+      const phraseY = (phraseRect.top - sceneRect.top) * scaleY;
+      const phraseWidth = phraseRect.width * scaleX;
+      const phraseHeight = phraseRect.height * scaleY;
+      const phraseFontSize = parseFloat(phraseStyle.fontSize) * ((scaleX + scaleY) / 2);
+      const phraseFont = '"Segoe Script", "Lucida Handwriting", "Brush Script MT", "Bradley Hand", cursive';
 
       context.save();
-      context.translate(x, y);
-      context.rotate(rotation);
-      context.shadowColor = "rgba(92, 104, 96, 0.2)";
-      context.shadowBlur = 18;
-      context.shadowOffsetY = 9;
-      drawRoundedRect(context, -cardWidth / 2 - 7, -cardHeight / 2 - 7, cardWidth + 14, cardHeight + 14, 16);
-      context.fillStyle = "rgba(255, 255, 255, 0.9)";
+      context.shadowColor = "rgba(0, 10, 24, 0.18)";
+      context.shadowBlur = 34 * ((scaleX + scaleY) / 2);
+      context.shadowOffsetY = 14 * scaleY;
+      drawRoundedRect(context, phraseX, phraseY, phraseWidth, phraseHeight, phraseHeight / 2);
+      context.fillStyle = "rgba(10, 35, 62, 0.22)";
       context.fill();
-      drawRoundedRect(context, -cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight, 12);
-      context.clip();
       context.shadowColor = "transparent";
-
-      if (image) {
-        drawImageCover(context, image, -cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight);
-      } else {
-        drawMemoryPlaceholder(context, -cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight, photoIndex);
-      }
+      context.strokeStyle = "rgba(255, 255, 255, 0.22)";
+      context.lineWidth = Math.max(1, scaleX);
+      context.stroke();
+      context.fillStyle = "rgba(232, 248, 255, 0.96)";
+      context.textAlign = "center";
+      context.textBaseline = "middle";
+      context.font = `600 ${phraseFontSize}px ${phraseFont}`;
+      context.shadowColor = "rgba(0, 13, 30, 0.62)";
+      context.shadowBlur = 12 * ((scaleX + scaleY) / 2);
+      context.fillText("Gracias por los mejores días de mi vida.", phraseX + phraseWidth / 2, phraseY + phraseHeight / 2);
       context.restore();
-
-      if (photoIndex % 4 === 0) {
-        context.save();
-        context.translate(x, y - cardHeight / 2 - 8);
-        context.rotate(rotation - 0.04);
-        context.fillStyle = "rgba(225, 244, 255, 0.58)";
-        drawRoundedRect(context, -cardWidth * 0.18, -5, cardWidth * 0.36, 10, 3);
-        context.fill();
-        context.restore();
-      }
-    });
+    }
 
     await saveCanvasAsImage(canvas, "las_mejores_vacaciones.png");
   } finally {
@@ -1578,6 +1793,35 @@ function openLetterFromMemories(event) {
     event.stopPropagation();
   }
   startTravelTransition();
+}
+
+function toggleQrPanel() {
+  const isVisible = qrPanel.classList.toggle("is-visible");
+  menuQr.setAttribute("aria-expanded", String(isVisible));
+  closeGlobalMenu();
+}
+
+function toggleMusicFromMenu() {
+  if (isMusicOn) {
+    stopMusic();
+  } else {
+    musicWasManuallyStopped = false;
+    startMusic();
+  }
+}
+
+function setMusicVolume(value) {
+  musicVolume = Math.max(0, Math.min(1, Number(value) / 100));
+  song.volume = musicVolume;
+}
+
+function navigateFromMenu(showScene) {
+  if (!letterHasFinished || isSceneTransitioning || isTravelTransitioning) {
+    return;
+  }
+
+  closeGlobalMenu();
+  runSceneTransition(showScene);
 }
 
 openLetter.addEventListener("click", () => runSceneTransition(() => showMemoryScene()));
@@ -1611,6 +1855,26 @@ skipTyping.addEventListener("click", completeLetter);
 rereadLetter.addEventListener("click", rereadCurrentLetter);
 downloadLetter.addEventListener("click", downloadLetterImage);
 downloadMemory.addEventListener("click", downloadMemoryImage);
+menuToggle.addEventListener("click", (event) => {
+  event.stopPropagation();
+  toggleGlobalMenu();
+});
+menuPanel.addEventListener("click", (event) => {
+  event.stopPropagation();
+});
+menuQr.addEventListener("click", toggleQrPanel);
+menuMusic.addEventListener("click", toggleMusicFromMenu);
+volumeControl.addEventListener("input", (event) => {
+  setMusicVolume(event.target.value);
+});
+menuHeart.addEventListener("click", () => navigateFromMenu(showHeartScene));
+menuMemories.addEventListener("click", () => navigateFromMenu(() => showMemoryScene({ completed: true })));
+menuLetter.addEventListener("click", () => navigateFromMenu(() => showLetterScene({ completed: true })));
+document.addEventListener("click", (event) => {
+  if (!floatingMenu.contains(event.target)) {
+    closeGlobalMenu();
+  }
+});
 paper.addEventListener("wheel", disableTypingAutoScrollFromUser, { passive: true });
 paper.addEventListener("touchstart", disableTypingAutoScrollFromUser, { passive: true });
 paper.addEventListener("touchmove", disableTypingAutoScrollFromUser, { passive: true });
@@ -1638,20 +1902,6 @@ photoViewer.addEventListener("click", (event) => {
     closePhotoViewer();
   }
 });
-viewMemories.addEventListener("click", () => runSceneTransition(() => showMemoryScene({ completed: true })));
-restart.addEventListener("click", () => runSceneTransition(showHeartScene));
-audioToggle.addEventListener("click", () => {
-  if (isMusicOn) {
-    stopMusic();
-  } else {
-    musicWasManuallyStopped = false;
-    startMusic();
-  }
-});
-qrToggle.addEventListener("click", () => {
-  const isVisible = qrPanel.classList.toggle("is-visible");
-  qrToggle.setAttribute("aria-expanded", String(isVisible));
-});
 window.addEventListener("resize", () => {
   normalizeMobileViewport();
 });
@@ -1664,6 +1914,11 @@ if (window.visualViewport) {
 }
 
 window.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && floatingMenu.classList.contains("is-open")) {
+    closeGlobalMenu();
+    return;
+  }
+
   if (event.key === "Escape" && photoViewer.classList.contains("is-visible")) {
     closePhotoViewer();
     return;
@@ -1677,17 +1932,19 @@ window.addEventListener("keydown", (event) => {
     startTravelTransition();
   }
 
-  if (event.key === "Escape" && memoryScene.classList.contains("is-active")) {
+  if (event.key === "Escape" && letterHasFinished && memoryScene.classList.contains("is-active")) {
     runSceneTransition(showHeartScene);
   }
 
-  if (event.key === "Escape" && letterScene.classList.contains("is-active")) {
+  if (event.key === "Escape" && letterHasFinished && letterScene.classList.contains("is-active")) {
     runSceneTransition(showHeartScene);
   }
 });
 
 window.addEventListener("load", () => {
   normalizeMobileViewport();
+  setMusicVolume(volumeControl.value);
+  updateGlobalMenu();
   startMusic({ automatic: true });
   window.setTimeout(() => {
     loader.classList.add("is-hidden");

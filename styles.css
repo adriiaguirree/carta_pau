@@ -69,54 +69,117 @@ button {
   font-weight: 700;
 }
 
-.audio-toggle {
+.floating-menu {
   position: fixed;
-  top: 14px;
-  right: 14px;
-  z-index: 20;
-  min-height: 38px;
-  padding: 0 16px;
+  top: max(12px, env(safe-area-inset-top));
+  right: max(12px, env(safe-area-inset-right));
+  z-index: 24;
+}
+
+.menu-toggle {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  min-height: 34px;
+  padding: 0 0 4px;
   border-radius: 999px;
   color: rgba(23, 63, 99, 0.78);
-  font-size: 0.9rem;
-  font-weight: 700;
-  background: rgba(255, 255, 255, 0.28);
-  box-shadow: inset 0 0 0 1px rgba(47, 164, 234, 0.16), 0 8px 20px rgba(36, 91, 130, 0.07);
-  opacity: 0.68;
+  font-size: 1.55rem;
+  font-weight: 800;
+  line-height: 1;
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: inset 0 0 0 1px rgba(47, 164, 234, 0.16), 0 8px 20px rgba(36, 91, 130, 0.08);
+  opacity: 0.72;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   transition: opacity 160ms ease, background 160ms ease, transform 160ms ease;
   transform: translate3d(0, 0, 0);
 }
 
-.qr-toggle {
-  position: fixed;
-  top: 14px;
-  left: 14px;
-  z-index: 20;
-  min-height: 38px;
-  padding: 0 16px;
-  border-radius: 999px;
-  color: rgba(23, 63, 99, 0.78);
-  font-size: 0.9rem;
-  font-weight: 700;
-  background: rgba(255, 255, 255, 0.28);
-  box-shadow: inset 0 0 0 1px rgba(47, 164, 234, 0.16), 0 8px 20px rgba(36, 91, 130, 0.07);
-  opacity: 0.68;
-  transition: opacity 160ms ease, background 160ms ease, transform 160ms ease;
-  transform: translate3d(0, 0, 0);
-}
-
-.audio-toggle:hover,
-.audio-toggle:focus-visible,
-.qr-toggle:hover,
-.qr-toggle:focus-visible {
-  background: rgba(255, 255, 255, 0.5);
+.menu-toggle:hover,
+.menu-toggle:focus-visible,
+.floating-menu.is-open .menu-toggle {
+  background: rgba(255, 255, 255, 0.58);
   opacity: 1;
+}
+
+.menu-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  display: grid;
+  gap: 7px;
+  width: min(210px, calc(100vw - 28px));
+  padding: 10px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.34);
+  box-shadow: 0 18px 44px rgba(36, 91, 130, 0.16), inset 0 0 0 1px rgba(255, 255, 255, 0.34);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate3d(0, -8px, 0) scale(0.98);
+  transform-origin: top right;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: opacity 180ms ease, transform 180ms ease, visibility 180ms ease;
+}
+
+.floating-menu.is-open .menu-panel {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+.menu-item {
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  color: rgba(23, 63, 99, 0.86);
+  font-size: 0.84rem;
+  font-weight: 800;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.45);
+  box-shadow: inset 0 0 0 1px rgba(47, 164, 234, 0.14);
+}
+
+.menu-item:hover,
+.menu-item:focus-visible,
+.menu-item[aria-pressed="true"] {
+  background: rgba(236, 249, 255, 0.72);
+}
+
+.menu-item:disabled {
+  cursor: default;
+  opacity: 0.42;
+}
+
+.menu-volume {
+  display: grid;
+  gap: 6px;
+  padding: 8px 10px 10px;
+  border-radius: 14px;
+  color: rgba(23, 63, 99, 0.76);
+  font-size: 0.76rem;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.menu-volume input {
+  width: 100%;
+  accent-color: #2f9de3;
+}
+
+.menu-divider {
+  height: 1px;
+  margin: 1px 4px;
+  background: linear-gradient(90deg, transparent, rgba(47, 164, 234, 0.28), transparent);
 }
 
 .qr-panel {
   position: fixed;
-  top: 58px;
-  left: 14px;
+  top: max(58px, calc(env(safe-area-inset-top) + 58px));
+  right: max(12px, env(safe-area-inset-right));
   z-index: 19;
   width: 178px;
   padding: 12px;
@@ -192,12 +255,6 @@ body.is-orientation-settling .experience {
   font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(1.6rem, 7vw, 2.4rem);
   font-weight: 700;
-}
-
-.audio-toggle[aria-pressed="true"] {
-  color: rgba(255, 255, 255, 0.9);
-  background: rgba(47, 164, 234, 0.42);
-  opacity: 0.76;
 }
 
 .experience {
@@ -403,13 +460,13 @@ h1 {
   background:
     linear-gradient(rgba(2, 7, 14, 0.1), rgba(2, 8, 18, 0.28)),
     radial-gradient(circle at 50% 48%, rgba(43, 118, 183, 0.18), transparent 38%),
-    url("media/fondo-estrellas.jpeg?v=20260623-40") center center / cover no-repeat,
+    url("media/fondo-estrellas.jpeg?v=20260623-43") center center / cover no-repeat,
     #03070e;
 }
 
 .memory-board {
   position: absolute;
-  inset: clamp(36px, 6vw, 80px);
+  inset: clamp(82px, 9vw, 118px) clamp(36px, 6vw, 80px) clamp(36px, 6vw, 80px);
   z-index: 2;
   pointer-events: none;
 }
@@ -494,6 +551,37 @@ h1 {
   }
 }
 
+.memory-phrase {
+  position: absolute;
+  left: 50%;
+  top: clamp(28px, 5.5vw, 58px);
+  z-index: 8;
+  max-width: min(82vw, 760px);
+  margin: 0;
+  padding: 9px 18px 11px;
+  border-radius: 999px;
+  color: rgba(232, 248, 255, 0.96);
+  font-family: "Segoe Script", "Lucida Handwriting", "Brush Script MT", "Bradley Hand", cursive;
+  font-size: clamp(1.12rem, 2.6vw, 2rem);
+  font-weight: 600;
+  line-height: 1.16;
+  text-align: center;
+  text-shadow: 0 2px 12px rgba(0, 13, 30, 0.62), 0 0 1px rgba(255, 255, 255, 0.5);
+  background: linear-gradient(135deg, rgba(10, 35, 62, 0.18), rgba(255, 255, 255, 0.11));
+  box-shadow: 0 14px 34px rgba(0, 10, 24, 0.12), inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(-50%, -8px, 0) scale(0.98);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: opacity 700ms ease 180ms, transform 700ms ease 180ms;
+}
+
+.scene-memory.is-memory-complete .memory-phrase {
+  opacity: 1;
+  transform: translate3d(-50%, 0, 0) scale(1);
+}
+
 .photo-viewer {
   position: fixed;
   inset: 0;
@@ -557,7 +645,7 @@ h1 {
   background:
     radial-gradient(circle at 50% 46%, rgba(48, 135, 211, 0.22), transparent 34%),
     linear-gradient(rgba(0, 5, 12, 0.04), rgba(0, 5, 12, 0.86)),
-    url("media/fondo-estrellas.jpeg?v=20260623-40") center center / cover no-repeat,
+    url("media/fondo-estrellas.jpeg?v=20260623-43") center center / cover no-repeat,
     #02050b;
   transition: opacity 520ms ease;
 }
@@ -575,12 +663,43 @@ h1 {
   opacity: 0;
   visibility: hidden;
   background:
-    radial-gradient(circle at 52% 42%, rgba(61, 151, 223, 0.16), transparent 34%),
-    linear-gradient(rgba(0, 4, 11, 0.08), rgba(0, 5, 18, 0.92)),
-    url("media/fondo-estrellas.jpeg?v=20260623-40") center center / cover no-repeat,
+    radial-gradient(circle at 52% 43%, rgba(77, 170, 240, 0.18), transparent 29%),
+    radial-gradient(circle at 20% 80%, rgba(72, 105, 180, 0.14), transparent 34%),
+    linear-gradient(135deg, rgba(0, 2, 10, 0.1), rgba(1, 9, 26, 0.72) 52%, rgba(0, 2, 9, 0.94)),
+    url("media/fondo-estrellas.jpeg?v=20260623-43") center center / cover no-repeat,
     #01040b;
   transition: opacity 520ms ease, visibility 520ms ease;
   contain: layout paint style;
+  isolation: isolate;
+  transform: translate3d(0, 0, 0);
+}
+
+.travel-transition::before,
+.travel-transition::after {
+  content: "";
+  position: absolute;
+  inset: -12%;
+  pointer-events: none;
+}
+
+.travel-transition::before {
+  opacity: 0.62;
+  background:
+    radial-gradient(circle at 18% 26%, rgba(255, 255, 255, 0.68) 0 0.7px, transparent 1.7px),
+    radial-gradient(circle at 74% 18%, rgba(159, 211, 255, 0.78) 0 0.9px, transparent 2px),
+    radial-gradient(circle at 86% 72%, rgba(255, 255, 255, 0.46) 0 0.8px, transparent 1.8px),
+    radial-gradient(circle at 38% 82%, rgba(181, 207, 255, 0.58) 0 1px, transparent 2.2px);
+  background-size: 180px 140px, 260px 210px, 340px 260px, 420px 320px;
+  transform: translate3d(0, 0, 0);
+}
+
+.travel-transition::after {
+  z-index: 1;
+  opacity: 0;
+  background:
+    radial-gradient(circle at 50% 58%, rgba(255, 247, 220, 0.42), transparent 23%),
+    radial-gradient(ellipse at 50% 48%, rgba(220, 243, 248, 0.34), transparent 32%),
+    linear-gradient(180deg, transparent 0 34%, rgba(188, 230, 242, 0.22) 40%, rgba(249, 229, 184, 0.54) 55%, rgba(216, 169, 96, 0.54));
 }
 
 .travel-transition.is-active {
@@ -589,9 +708,35 @@ h1 {
   visibility: visible;
 }
 
+.travel-transition.is-active::before {
+  animation: travelDeepStars 7.2s cubic-bezier(0.18, 0.76, 0.18, 1) both;
+}
+
+.travel-transition.is-active::after {
+  animation: travelWarmArrival 7.2s ease both;
+}
+
+.travel-arrival-base {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  opacity: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(225, 244, 249, 0.28), transparent 28%),
+    radial-gradient(circle at 52% 62%, rgba(255, 248, 221, 0.52), transparent 26%),
+    linear-gradient(180deg, transparent 0 30%, rgba(146, 211, 231, 0.22) 34%, rgba(252, 230, 184, 0.76) 50%, rgba(213, 166, 94, 0.84) 100%);
+  transform: translate3d(0, 4%, 0) scale(1.08);
+  backface-visibility: hidden;
+  will-change: opacity, transform;
+}
+
+.travel-transition.is-active .travel-arrival-base {
+  animation: travelArrivalBase 7.2s ease both;
+}
+
 body.is-traveling .experience,
-body.is-traveling .audio-toggle,
-body.is-traveling .qr-toggle,
+body.is-traveling .floating-menu,
 body.is-traveling .qr-panel {
   pointer-events: none;
 }
@@ -599,35 +744,41 @@ body.is-traveling .qr-panel {
 .travel-stars {
   position: absolute;
   inset: -8%;
+  z-index: 2;
   opacity: 0;
   background:
-    radial-gradient(circle at 22% 22%, rgba(170, 222, 255, 0.7) 0 1px, transparent 2px),
+    radial-gradient(circle at 22% 22%, rgba(170, 222, 255, 0.82) 0 1px, transparent 2.3px),
     radial-gradient(circle at 68% 14%, rgba(255, 255, 255, 0.9) 0 1px, transparent 2px),
-    radial-gradient(circle at 81% 70%, rgba(169, 204, 255, 0.72) 0 1px, transparent 2px),
-    radial-gradient(circle at 42% 62%, rgba(255, 255, 255, 0.7) 0 1px, transparent 2px),
+    radial-gradient(circle at 81% 70%, rgba(169, 204, 255, 0.72) 0 1.2px, transparent 2.7px),
+    radial-gradient(circle at 42% 62%, rgba(255, 255, 255, 0.7) 0 0.8px, transparent 2px),
+    radial-gradient(circle at 52% 46%, rgba(75, 160, 235, 0.2), transparent 31%),
     linear-gradient(145deg, rgba(0, 10, 26, 0.08), rgba(4, 18, 44, 0.54));
-  background-size: 210px 170px, 260px 220px, 310px 260px, 190px 150px, auto;
-  filter: saturate(1.08);
-  transform: scale(1.08);
+  background-size: 190px 150px, 270px 230px, 360px 280px, 520px 390px, auto, auto;
+  transform: scale(1.12);
+  backface-visibility: hidden;
+  will-change: opacity, transform;
 }
 
 .travel-transition.is-active .travel-stars {
-  animation: travelStars 6.4s cubic-bezier(0.18, 0.76, 0.18, 1) both;
+  animation: travelStars 7.2s cubic-bezier(0.18, 0.76, 0.18, 1) both;
 }
 
 .travel-orbit {
   position: absolute;
   left: 50%;
   top: 49%;
-  width: min(52vw, 520px);
+  z-index: 4;
+  width: min(54vw, 560px);
   aspect-ratio: 1;
   opacity: 0;
   transform: translate3d(-50%, -50%, 0) scale(0.2);
   transform-origin: 50% 50%;
+  backface-visibility: hidden;
+  will-change: opacity, transform;
 }
 
 .travel-transition.is-active .travel-orbit {
-  animation: travelOrbit 6.4s cubic-bezier(0.18, 0.76, 0.18, 1) both;
+  animation: travelOrbit 7.2s cubic-bezier(0.18, 0.76, 0.18, 1) both;
 }
 
 .travel-earth {
@@ -636,71 +787,162 @@ body.is-traveling .qr-panel {
   overflow: hidden;
   border-radius: 50%;
   background:
-    radial-gradient(circle at 34% 25%, rgba(255, 255, 255, 0.78), transparent 0 7%, transparent 14%),
-    radial-gradient(circle at 62% 35%, rgba(255, 255, 255, 0.36), transparent 0 11%, transparent 16%),
-    linear-gradient(140deg, transparent 0 24%, rgba(179, 229, 170, 0.85) 25% 35%, transparent 36% 100%),
-    linear-gradient(36deg, transparent 0 34%, rgba(203, 214, 142, 0.8) 35% 45%, transparent 46% 100%),
-    radial-gradient(circle at 62% 58%, rgba(118, 191, 129, 0.74) 0 15%, transparent 16%),
-    radial-gradient(circle at 40% 64%, rgba(235, 196, 111, 0.64) 0 10%, transparent 11%),
-    linear-gradient(145deg, #68c8f4 0%, #1a73bf 46%, #0d3f82 100%);
+    radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.28), transparent 0 11%, transparent 26%),
+    radial-gradient(circle at 44% 42%, rgba(96, 205, 255, 0.42), transparent 34%),
+    radial-gradient(circle at 62% 64%, rgba(0, 57, 128, 0.48), transparent 42%),
+    linear-gradient(142deg, #78d4f4 0%, #2185ce 38%, #0c4e9a 66%, #071b54 100%);
   box-shadow:
-    inset -34px -44px 70px rgba(0, 18, 50, 0.46),
-    inset 18px 18px 44px rgba(255, 255, 255, 0.22),
-    0 0 48px rgba(93, 189, 255, 0.42),
-    0 0 120px rgba(59, 130, 205, 0.3);
+    inset -68px -46px 92px rgba(0, 11, 42, 0.72),
+    inset 24px 18px 52px rgba(255, 255, 255, 0.28),
+    inset 0 0 22px rgba(131, 221, 255, 0.2),
+    0 0 0 1px rgba(191, 237, 255, 0.22),
+    0 0 54px rgba(93, 189, 255, 0.46),
+    0 0 138px rgba(59, 130, 205, 0.36);
+  transform: translateZ(0);
 }
 
 .travel-earth::before,
 .travel-earth::after {
   content: "";
   position: absolute;
-  inset: 12%;
+  inset: 0;
   border-radius: 50%;
   pointer-events: none;
 }
 
 .travel-earth::before {
-  opacity: 0.36;
+  z-index: 7;
+  opacity: 0.52;
   background:
-    linear-gradient(18deg, transparent 30%, rgba(255, 255, 255, 0.78) 31% 35%, transparent 36% 100%),
-    linear-gradient(146deg, transparent 44%, rgba(255, 255, 255, 0.6) 45% 49%, transparent 50% 100%);
-  filter: blur(4px);
+    radial-gradient(circle at 28% 22%, rgba(255, 255, 255, 0.5), transparent 0 15%, transparent 38%),
+    linear-gradient(110deg, rgba(255, 255, 255, 0.16), transparent 42%),
+    radial-gradient(circle at 73% 64%, rgba(0, 9, 38, 0.38), transparent 44%);
+  mix-blend-mode: screen;
 }
 
 .travel-earth::after {
-  inset: -1%;
-  border: 1px solid rgba(190, 232, 255, 0.36);
-  box-shadow: inset 0 0 32px rgba(255, 255, 255, 0.22);
+  z-index: 9;
+  inset: -1.5%;
+  border: 1px solid rgba(190, 232, 255, 0.48);
+  box-shadow:
+    inset 0 0 38px rgba(255, 255, 255, 0.2),
+    inset -38px -34px 72px rgba(0, 8, 32, 0.42),
+    0 0 22px rgba(163, 223, 255, 0.62);
+}
+
+.earth-land {
+  position: absolute;
+  z-index: 2;
+  display: block;
+  opacity: 0.9;
+  filter: blur(0.3px) saturate(1.02);
+  background:
+    radial-gradient(circle at 28% 34%, rgba(232, 201, 124, 0.95) 0 18%, transparent 19%),
+    radial-gradient(circle at 56% 52%, rgba(79, 151, 102, 0.94) 0 27%, transparent 28%),
+    radial-gradient(circle at 72% 30%, rgba(184, 189, 103, 0.9) 0 19%, transparent 20%),
+    linear-gradient(145deg, rgba(94, 155, 98, 0.95), rgba(221, 184, 99, 0.78));
+}
+
+.earth-land.land-a {
+  left: 10%;
+  top: 25%;
+  width: 34%;
+  height: 25%;
+  border-radius: 58% 42% 45% 55% / 43% 58% 42% 57%;
+  clip-path: polygon(4% 34%, 15% 18%, 30% 8%, 47% 15%, 58% 4%, 81% 18%, 92% 39%, 82% 60%, 68% 58%, 55% 76%, 34% 88%, 18% 72%, 8% 56%);
+  --land-rotate: -18deg;
+  transform: rotate(var(--land-rotate));
+}
+
+.earth-land.land-b {
+  left: 30%;
+  top: 44%;
+  width: 22%;
+  height: 33%;
+  border-radius: 42% 58% 56% 44% / 36% 44% 56% 64%;
+  clip-path: polygon(28% 0, 53% 8%, 69% 24%, 62% 44%, 82% 62%, 68% 84%, 44% 100%, 28% 82%, 34% 62%, 12% 48%, 20% 25%);
+  --land-rotate: 16deg;
+  transform: rotate(var(--land-rotate));
+}
+
+.earth-land.land-c {
+  right: 14%;
+  top: 31%;
+  width: 35%;
+  height: 28%;
+  border-radius: 52% 48% 42% 58% / 54% 42% 58% 46%;
+  clip-path: polygon(0 44%, 16% 20%, 34% 17%, 48% 4%, 70% 16%, 94% 10%, 100% 38%, 85% 58%, 72% 78%, 45% 76%, 26% 92%, 10% 70%);
+  --land-rotate: 11deg;
+  transform: rotate(var(--land-rotate));
+}
+
+.earth-land.land-d {
+  right: 25%;
+  bottom: 15%;
+  width: 22%;
+  height: 18%;
+  border-radius: 52% 48% 56% 44% / 44% 52% 48% 56%;
+  opacity: 0.72;
+  clip-path: polygon(8% 42%, 20% 18%, 44% 8%, 66% 14%, 88% 34%, 82% 64%, 58% 84%, 28% 78%);
+  --land-rotate: -8deg;
+  transform: rotate(var(--land-rotate));
 }
 
 .travel-cloud {
   position: absolute;
+  z-index: 6;
   display: block;
-  height: 10%;
+  height: 11%;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.56);
-  filter: blur(3px);
+  opacity: 0.72;
+  background:
+    radial-gradient(ellipse at 18% 52%, rgba(255, 255, 255, 0.82) 0 18%, transparent 19%),
+    radial-gradient(ellipse at 42% 45%, rgba(255, 255, 255, 0.7) 0 24%, transparent 25%),
+    radial-gradient(ellipse at 72% 56%, rgba(255, 255, 255, 0.58) 0 22%, transparent 23%),
+    linear-gradient(90deg, transparent 0 4%, rgba(255, 255, 255, 0.58) 14% 82%, transparent 96%);
+  filter: blur(3.5px);
+  mix-blend-mode: screen;
 }
 
 .travel-cloud.cloud-a {
-  left: 18%;
-  top: 24%;
-  width: 42%;
-  transform: rotate(-13deg);
+  left: 11%;
+  top: 23%;
+  width: 48%;
+  --cloud-rotate: -16deg;
+  transform: rotate(var(--cloud-rotate));
 }
 
 .travel-cloud.cloud-b {
-  right: 10%;
-  top: 46%;
-  width: 48%;
-  transform: rotate(11deg);
+  right: 8%;
+  top: 43%;
+  width: 54%;
+  --cloud-rotate: 12deg;
+  transform: rotate(var(--cloud-rotate));
 }
 
 .travel-cloud.cloud-c {
-  left: 24%;
-  bottom: 24%;
-  width: 36%;
-  transform: rotate(18deg);
+  left: 20%;
+  bottom: 19%;
+  width: 40%;
+  --cloud-rotate: 21deg;
+  transform: rotate(var(--cloud-rotate));
+}
+
+.travel-cloud.cloud-d {
+  right: 20%;
+  top: 18%;
+  width: 34%;
+  --cloud-rotate: 24deg;
+  transform: rotate(var(--cloud-rotate));
+  opacity: 0.5;
+}
+
+.travel-transition.is-active .earth-land {
+  animation: earthLandDrift 7.2s ease-in-out both;
+}
+
+.travel-transition.is-active .travel-cloud {
+  animation: earthCloudDrift 7.2s ease-in-out both;
 }
 
 .mexico-marker,
@@ -715,38 +957,67 @@ body.is-traveling .qr-panel {
 
 .mexico-marker {
   z-index: 3;
-  width: 4.8%;
+  width: 3.4%;
   aspect-ratio: 1;
-  background: #fff6c9;
+  background: radial-gradient(circle, #fff8cf 0 38%, rgba(255, 224, 128, 0.88) 45%, rgba(255, 224, 128, 0) 70%);
   box-shadow:
-    0 0 0 6px rgba(255, 246, 201, 0.2),
-    0 0 24px rgba(255, 241, 166, 0.94),
-    0 0 54px rgba(107, 195, 255, 0.72);
+    0 0 0 4px rgba(255, 246, 201, 0.16),
+    0 0 18px rgba(255, 241, 166, 0.82),
+    0 0 42px rgba(107, 195, 255, 0.5);
 }
 
 .mexico-glow {
   z-index: 2;
-  width: 24%;
+  width: 19%;
   aspect-ratio: 1;
-  background: radial-gradient(circle, rgba(255, 246, 201, 0.46), transparent 68%);
+  background: radial-gradient(circle, rgba(255, 246, 201, 0.32), rgba(117, 204, 255, 0.14) 42%, transparent 70%);
 }
 
 .travel-transition.is-active .mexico-marker {
-  animation: mexicoPulse 1.15s ease-in-out 2.3s 3 both;
+  animation: mexicoPulse 1.25s ease-in-out 2.55s 3 both;
 }
 
 .travel-beach {
   position: absolute;
   inset: 0;
+  z-index: 5;
   opacity: 0;
   transform: translate3d(0, 8%, 0) scale(1.08);
   background:
-    radial-gradient(circle at 52% 64%, rgba(255, 253, 241, 0.76), transparent 23%),
-    linear-gradient(180deg, rgba(133, 206, 239, 0.9) 0 28%, rgba(221, 241, 249, 0.94) 33%, rgba(238, 211, 164, 0.96) 54%, #e1bf85 100%);
+    radial-gradient(circle at 52% 62%, rgba(255, 252, 230, 0.86), transparent 28%),
+    radial-gradient(circle at 15% 78%, rgba(255, 255, 255, 0.28), transparent 20%),
+    linear-gradient(180deg, #45abd8 0 22%, #98d9ec 31%, #f7e4bd 50%, #d8b374 100%);
+  background-color: #e0bb7e;
+  backface-visibility: hidden;
+  will-change: opacity, transform;
+}
+
+.travel-beach::before,
+.travel-beach::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.travel-beach::before {
+  z-index: 0;
+  background:
+    radial-gradient(ellipse at 50% 57%, rgba(255, 250, 224, 0.62), transparent 23%),
+    linear-gradient(180deg, rgba(78, 176, 219, 0.72) 0 34%, rgba(255, 240, 204, 0.78) 47%, rgba(217, 176, 106, 0.64) 100%);
+}
+
+.travel-beach::after {
+  z-index: 7;
+  opacity: 0.4;
+  background:
+    radial-gradient(circle at 54% 54%, rgba(255, 255, 255, 0.4), transparent 20%),
+    linear-gradient(115deg, transparent 0 42%, rgba(255, 255, 255, 0.18) 51%, transparent 64% 100%);
+  mix-blend-mode: screen;
 }
 
 .travel-transition.is-active .travel-beach {
-  animation: travelBeach 6.4s cubic-bezier(0.18, 0.76, 0.18, 1) both;
+  animation: travelBeach 7.2s cubic-bezier(0.18, 0.76, 0.18, 1) both;
 }
 
 .travel-sea,
@@ -759,38 +1030,215 @@ body.is-traveling .qr-panel {
 }
 
 .travel-sea {
-  top: 0;
-  height: 45%;
+  top: -2%;
+  z-index: 1;
+  height: 48%;
   opacity: 0.9;
   background:
-    radial-gradient(ellipse at 50% 102%, rgba(255, 255, 255, 0.62) 0 12%, transparent 13%),
-    linear-gradient(180deg, rgba(76, 176, 223, 0.92), rgba(28, 116, 175, 0.78));
+    radial-gradient(ellipse at 50% 102%, rgba(255, 255, 255, 0.72) 0 10%, transparent 11%),
+    radial-gradient(ellipse at 22% 30%, rgba(194, 239, 255, 0.38), transparent 28%),
+    linear-gradient(178deg, rgba(25, 105, 177, 0.96) 0%, rgba(51, 163, 214, 0.9) 54%, rgba(176, 225, 238, 0.86) 100%);
+  overflow: hidden;
+}
+
+.travel-sea::before,
+.travel-sea::after {
+  content: "";
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  height: 42%;
+  pointer-events: none;
+}
+
+.travel-sea::before {
+  top: 34%;
+  opacity: 0.48;
+  background:
+    repeating-linear-gradient(174deg, transparent 0 18px, rgba(255, 255, 255, 0.22) 19px 21px, transparent 22px 46px),
+    repeating-linear-gradient(2deg, transparent 0 34px, rgba(209, 244, 255, 0.18) 35px 37px, transparent 38px 74px),
+    radial-gradient(ellipse at 50% 100%, rgba(255, 255, 255, 0.38), transparent 58%);
+}
+
+.travel-sea::after {
+  top: 58%;
+  opacity: 0.34;
+  background:
+    repeating-linear-gradient(2deg, rgba(255, 255, 255, 0.32) 0 2px, transparent 3px 24px);
+  transform: rotate(-1.2deg);
 }
 
 .travel-shore {
-  top: 34%;
-  height: 22%;
-  border-radius: 0 0 50% 50%;
-  opacity: 0.88;
+  top: 33%;
+  z-index: 3;
+  height: 25%;
+  border-radius: 0 0 48% 52% / 0 0 72% 64%;
+  opacity: 0.9;
   background:
-    radial-gradient(ellipse at 48% 0%, rgba(255, 255, 255, 0.9) 0 18%, transparent 19% 100%),
-    linear-gradient(180deg, rgba(206, 239, 250, 0.75), rgba(255, 246, 225, 0.9));
-  filter: blur(1px);
+    radial-gradient(ellipse at 20% 12%, rgba(255, 255, 255, 0.78) 0 9%, transparent 10% 100%),
+    radial-gradient(ellipse at 52% 4%, rgba(255, 255, 255, 0.92) 0 16%, transparent 17% 100%),
+    radial-gradient(ellipse at 78% 16%, rgba(255, 255, 255, 0.62) 0 12%, transparent 13% 100%),
+    linear-gradient(180deg, rgba(216, 244, 250, 0.7), rgba(255, 247, 225, 0.92));
+  clip-path: polygon(0 22%, 9% 18%, 19% 25%, 32% 16%, 44% 23%, 57% 13%, 69% 19%, 82% 14%, 100% 22%, 100% 100%, 0 100%);
+}
+
+.travel-shore::before,
+.travel-shore::after {
+  content: "";
+  position: absolute;
+  left: -5%;
+  right: -5%;
+  pointer-events: none;
+}
+
+.travel-shore::before {
+  top: 14%;
+  height: 42%;
+  opacity: 0.58;
+  background:
+    radial-gradient(ellipse at 8% 42%, rgba(255, 255, 255, 0.9) 0 7%, transparent 8%),
+    radial-gradient(ellipse at 26% 34%, rgba(255, 255, 255, 0.78) 0 9%, transparent 10%),
+    radial-gradient(ellipse at 48% 46%, rgba(255, 255, 255, 0.86) 0 8%, transparent 9%),
+    radial-gradient(ellipse at 70% 36%, rgba(255, 255, 255, 0.76) 0 9%, transparent 10%),
+    radial-gradient(ellipse at 92% 44%, rgba(255, 255, 255, 0.84) 0 7%, transparent 8%);
+}
+
+.travel-shore::after {
+  bottom: 12%;
+  height: 28%;
+  opacity: 0.35;
+  background: repeating-linear-gradient(178deg, transparent 0 42px, rgba(255, 255, 255, 0.62) 43px 46px, transparent 47px 92px);
 }
 
 .travel-sand {
   top: 45%;
+  z-index: 2;
   bottom: 0;
   background:
-    radial-gradient(circle at 20% 28%, rgba(255, 255, 255, 0.34) 0 1px, transparent 2px),
+    radial-gradient(circle at 20% 28%, rgba(255, 255, 255, 0.32) 0 1px, transparent 2px),
     radial-gradient(circle at 62% 46%, rgba(139, 94, 45, 0.14) 0 1px, transparent 2px),
     radial-gradient(circle at 82% 76%, rgba(255, 250, 226, 0.38) 0 1px, transparent 2px),
-    linear-gradient(115deg, #f7e5bc, #dcb879 58%, #cfa369);
-  background-size: 42px 38px, 58px 46px, 72px 56px, auto;
+    radial-gradient(ellipse at 48% 8%, rgba(255, 249, 225, 0.7), transparent 41%),
+    radial-gradient(ellipse at 18% 82%, rgba(139, 94, 45, 0.13), transparent 22%),
+    linear-gradient(115deg, #f8e8bd, #dfbd7d 57%, #cfa165);
+  background-color: #dfbd7d;
+  background-size: 28px 25px, 44px 36px, 68px 52px, auto, auto, auto;
+}
+
+.travel-sand::before,
+.travel-sand::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.travel-sand::before {
+  opacity: 0.2;
+  background:
+    repeating-linear-gradient(8deg, transparent 0 22px, rgba(128, 84, 39, 0.14) 23px 24px, transparent 25px 58px),
+    repeating-linear-gradient(96deg, transparent 0 32px, rgba(255, 255, 255, 0.22) 33px 34px, transparent 35px 70px);
+}
+
+.travel-sand::after {
+  opacity: 0.62;
+  background:
+    radial-gradient(circle at 46% 34%, rgba(255, 250, 225, 0.52), transparent 18%),
+    radial-gradient(circle at 72% 84%, rgba(117, 82, 42, 0.16), transparent 16%),
+    linear-gradient(180deg, rgba(255, 252, 228, 0.34), transparent 32%);
+}
+
+.travel-wave {
+  position: absolute;
+  left: -12%;
+  right: -12%;
+  z-index: 4;
+  display: block;
+  height: 12%;
+  pointer-events: none;
+  opacity: 0.62;
+  background:
+    radial-gradient(ellipse at 8% 56%, rgba(255, 255, 255, 0.68) 0 5%, transparent 6%),
+    radial-gradient(ellipse at 27% 42%, rgba(255, 255, 255, 0.72) 0 7%, transparent 8%),
+    radial-gradient(ellipse at 49% 58%, rgba(255, 255, 255, 0.66) 0 6%, transparent 7%),
+    radial-gradient(ellipse at 72% 45%, rgba(255, 255, 255, 0.72) 0 7%, transparent 8%),
+    radial-gradient(ellipse at 92% 58%, rgba(255, 255, 255, 0.62) 0 5%, transparent 6%);
+}
+
+.travel-wave.wave-a {
+  --wave-opacity: 0.62;
+  --wave-rotate: -1deg;
+  top: 35.5%;
+  transform: rotate(var(--wave-rotate));
+}
+
+.travel-wave.wave-b {
+  --wave-opacity: 0.48;
+  --wave-rotate: 1.2deg;
+  top: 39.5%;
+  opacity: 0.48;
+  transform: rotate(var(--wave-rotate)) scaleX(1.04);
+}
+
+.travel-wave.wave-c {
+  --wave-opacity: 0.34;
+  --wave-rotate: -0.5deg;
+  top: 43%;
+  opacity: 0.34;
+  transform: rotate(var(--wave-rotate)) scaleX(1.08);
+}
+
+.travel-foam {
+  position: absolute;
+  left: -8%;
+  right: -8%;
+  z-index: 5;
+  display: block;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.travel-foam.foam-a {
+  top: 39%;
+  height: 11%;
+  background:
+    radial-gradient(ellipse at 12% 48%, rgba(255, 255, 255, 0.86) 0 6%, transparent 7%),
+    radial-gradient(ellipse at 35% 38%, rgba(255, 255, 255, 0.72) 0 8%, transparent 9%),
+    radial-gradient(ellipse at 58% 52%, rgba(255, 255, 255, 0.82) 0 7%, transparent 8%),
+    radial-gradient(ellipse at 82% 42%, rgba(255, 255, 255, 0.7) 0 8%, transparent 9%);
+}
+
+.travel-foam.foam-b {
+  top: 44%;
+  height: 7%;
+  opacity: 0.42;
+  background:
+    repeating-linear-gradient(176deg, transparent 0 34px, rgba(255, 255, 255, 0.66) 35px 38px, transparent 39px 80px);
+}
+
+.travel-light {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  display: block;
+  pointer-events: none;
+  opacity: 0.65;
+  background:
+    radial-gradient(circle at 51% 54%, rgba(255, 251, 228, 0.48), transparent 22%),
+    linear-gradient(115deg, transparent 0 44%, rgba(255, 255, 255, 0.16) 52%, transparent 66% 100%);
+}
+
+.travel-transition.is-active .travel-wave {
+  animation: travelWaveDrift 7.2s ease-in-out both;
+}
+
+.travel-transition.is-active .travel-sea::before {
+  animation: travelWaterDrift 7.2s ease-in-out both;
 }
 
 .travel-paper-preview {
   position: absolute;
+  z-index: 10;
   display: block;
   overflow: hidden;
   border-radius: 10px;
@@ -810,14 +1258,19 @@ body.is-traveling .qr-panel {
 
 .travel-paper-preview {
   left: 50%;
-  bottom: 9%;
-  width: clamp(210px, 28vw, 420px);
+  bottom: 8%;
+  width: clamp(230px, 30vw, 460px);
   aspect-ratio: 1.42;
   opacity: 0;
-  transform: translate3d(-50%, 18px, 0) rotate(-1deg) scale(0.86);
+  transform: translate3d(-50%, 22px, 0) rotate(-1.4deg) scale(0.82);
   background:
     linear-gradient(90deg, rgba(146, 202, 232, 0.18) 1px, transparent 1px) 0 0 / 34px 100%,
-    linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(235, 249, 255, 0.92));
+    radial-gradient(circle at 18% 20%, rgba(255, 255, 255, 0.68), transparent 30%),
+    linear-gradient(145deg, rgba(255, 252, 243, 0.96), rgba(235, 249, 255, 0.92));
+  box-shadow:
+    0 26px 52px rgba(77, 53, 28, 0.28),
+    0 6px 14px rgba(77, 53, 28, 0.14),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.6);
   clip-path: polygon(1% 9%, 14% 5%, 28% 8%, 44% 5%, 62% 8%, 80% 5%, 98% 8%, 96% 94%, 74% 96%, 54% 93%, 35% 97%, 15% 94%, 2% 96%);
 }
 
@@ -831,38 +1284,7 @@ body.is-traveling .qr-panel {
 }
 
 .travel-transition.is-active .travel-paper-preview {
-  animation: travelPaperReveal 6.4s cubic-bezier(0.18, 0.76, 0.18, 1) both;
-}
-
-.travel-hydrangea {
-  position: absolute;
-  display: block;
-  width: clamp(64px, 8vw, 120px);
-  aspect-ratio: 1;
-  opacity: 0;
-  filter: drop-shadow(0 12px 20px rgba(70, 76, 94, 0.14));
-  background:
-    radial-gradient(circle at 32% 34%, rgba(176, 226, 255, 0.92) 0 9%, transparent 10%),
-    radial-gradient(circle at 52% 25%, rgba(142, 190, 255, 0.9) 0 10%, transparent 11%),
-    radial-gradient(circle at 66% 43%, rgba(208, 194, 255, 0.85) 0 9%, transparent 10%),
-    radial-gradient(circle at 42% 58%, rgba(119, 207, 255, 0.86) 0 10%, transparent 11%),
-    radial-gradient(circle at 61% 63%, rgba(231, 220, 255, 0.8) 0 8%, transparent 9%);
-}
-
-.travel-hydrangea.bloom-a {
-  left: 8%;
-  bottom: 7%;
-  transform: rotate(-12deg);
-}
-
-.travel-hydrangea.bloom-b {
-  right: 8%;
-  bottom: 6%;
-  transform: rotate(12deg);
-}
-
-.travel-transition.is-active .travel-hydrangea {
-  animation: travelBloom 6.4s cubic-bezier(0.18, 0.76, 0.18, 1) both;
+  animation: travelPaperReveal 7.2s cubic-bezier(0.18, 0.76, 0.18, 1) both;
 }
 
 .memory-actions {
@@ -1033,39 +1455,6 @@ body.is-traveling .qr-panel {
 
 .letter-beach-photo.is-soft {
   --photo-opacity: 0.76;
-}
-
-.letter-beach-decor {
-  position: absolute;
-  z-index: 2;
-  display: block;
-  width: clamp(82px, 8vw, 150px);
-  aspect-ratio: 1;
-  filter: drop-shadow(0 12px 20px rgba(70, 76, 94, 0.12));
-  background:
-    radial-gradient(circle at 32% 34%, rgba(176, 226, 255, 0.92) 0 9%, transparent 10%),
-    radial-gradient(circle at 52% 25%, rgba(142, 190, 255, 0.9) 0 10%, transparent 11%),
-    radial-gradient(circle at 66% 43%, rgba(208, 194, 255, 0.85) 0 9%, transparent 10%),
-    radial-gradient(circle at 42% 58%, rgba(119, 207, 255, 0.86) 0 10%, transparent 11%),
-    radial-gradient(circle at 61% 63%, rgba(231, 220, 255, 0.8) 0 8%, transparent 9%);
-  opacity: 0;
-  transition: opacity 680ms ease;
-}
-
-.scene-letter.is-open .letter-beach-decor {
-  opacity: 0.32;
-}
-
-.letter-beach-decor.decor-a {
-  left: 4%;
-  bottom: 6%;
-  transform: rotate(-14deg);
-}
-
-.letter-beach-decor.decor-b {
-  right: 4%;
-  bottom: 7%;
-  transform: rotate(12deg);
 }
 
 .scene-letter.from-beach-transition .letter-beach-photo {
@@ -1573,56 +1962,128 @@ body.is-traveling .qr-panel {
 @keyframes travelStars {
   0% {
     opacity: 0;
-    transform: scale(1.18) translate3d(0, 0, 0);
-    filter: brightness(0.74) saturate(0.96);
+    transform: scale(1.2) translate3d(0, 0, 0);
   }
   12% {
     opacity: 1;
   }
-  48% {
+  50% {
     opacity: 1;
-    transform: scale(1.06) translate3d(0, -1.5%, 0);
-    filter: brightness(1.08) saturate(1.08);
+    transform: scale(1.08) translate3d(0, -1.5%, 0);
   }
-  72% {
-    opacity: 0.5;
+  76% {
+    opacity: 0.42;
   }
   100% {
     opacity: 0;
-    transform: scale(1.2) translate3d(0, -5%, 0);
-    filter: brightness(1.16) saturate(1.14);
+    transform: scale(1.28) translate3d(0, -6%, 0);
+  }
+}
+
+@keyframes travelDeepStars {
+  0% {
+    opacity: 0;
+    transform: scale(1.08) translate3d(0, 0, 0);
+  }
+  16%,
+  56% {
+    opacity: 0.72;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.2) translate3d(0, -4%, 0);
+  }
+}
+
+@keyframes travelWarmArrival {
+  0%,
+  28% {
+    opacity: 0;
+  }
+  42% {
+    opacity: 0.38;
+  }
+  58% {
+    opacity: 0.86;
+  }
+  78% {
+    opacity: 0.74;
+  }
+  100% {
+    opacity: 0.58;
+  }
+}
+
+@keyframes travelArrivalBase {
+  0%,
+  30% {
+    opacity: 0;
+    transform: translate3d(0, 7%, 0) scale(1.12);
+  }
+  45% {
+    opacity: 0.34;
+  }
+  58% {
+    opacity: 0.82;
+    transform: translate3d(0, 3%, 0) scale(1.07);
+  }
+  74% {
+    opacity: 0.68;
+    transform: translate3d(0, 1%, 0) scale(1.03);
+  }
+  100% {
+    opacity: 0.28;
+    transform: translate3d(0, 0, 0) scale(1);
   }
 }
 
 @keyframes travelOrbit {
   0% {
     opacity: 0;
-    transform: translate3d(-50%, -50%, 0) scale(0.12);
-    filter: blur(4px);
+    transform: translate3d(-50%, -50%, 0) scale(0.1) rotate(-4deg);
   }
   18% {
     opacity: 1;
-    transform: translate3d(-50%, -50%, 0) scale(0.54);
-    filter: blur(0);
+    transform: translate3d(-50%, -50%, 0) scale(0.5) rotate(-2deg);
   }
-  42% {
+  43% {
     opacity: 1;
-    transform: translate3d(-50%, -50%, 0) scale(0.86);
+    transform: translate3d(-50%, -50%, 0) scale(0.9) rotate(1.5deg);
   }
-  60% {
+  62% {
     opacity: 1;
-    transform: translate3d(-50%, -50%, 0) scale(2.7);
-    filter: blur(0);
+    transform: translate3d(-50%, -51%, 0) scale(2.95) rotate(5deg);
   }
-  72% {
+  76% {
     opacity: 0;
-    transform: translate3d(-50%, -50%, 0) scale(5.3);
-    filter: blur(8px);
+    transform: translate3d(-50%, -52%, 0) scale(5.9) rotate(8deg);
   }
   100% {
     opacity: 0;
-    transform: translate3d(-50%, -50%, 0) scale(5.8);
-    filter: blur(12px);
+    transform: translate3d(-50%, -52%, 0) scale(6.2) rotate(8deg);
+  }
+}
+
+@keyframes earthLandDrift {
+  0% {
+    transform: translate3d(-2%, 0, 0) rotate(var(--land-rotate, 0deg));
+  }
+  58% {
+    transform: translate3d(2.4%, -0.6%, 0) rotate(var(--land-rotate, 0deg));
+  }
+  100% {
+    transform: translate3d(4%, -1%, 0) rotate(var(--land-rotate, 0deg));
+  }
+}
+
+@keyframes earthCloudDrift {
+  0% {
+    background-position: 0 0;
+    transform: translate3d(-4%, 0, 0) rotate(var(--cloud-rotate, 0deg));
+  }
+  100% {
+    background-position: 46px 0;
+    transform: translate3d(5%, -1%, 0) rotate(var(--cloud-rotate, 0deg));
   }
 }
 
@@ -1638,69 +2099,101 @@ body.is-traveling .qr-panel {
 
 @keyframes travelBeach {
   0%,
-  48% {
+  34% {
     opacity: 0;
-    transform: translate3d(0, 9%, 0) scale(1.12);
-    filter: blur(12px) brightness(1.16);
+    transform: translate3d(0, 10%, 0) scale(1.16);
   }
-  66% {
+  46% {
+    opacity: 0.2;
+    transform: translate3d(0, 8%, 0) scale(1.13);
+  }
+  58% {
+    opacity: 0.66;
+    transform: translate3d(0, 4.5%, 0) scale(1.085);
+  }
+  70% {
     opacity: 1;
-    transform: translate3d(0, 1%, 0) scale(1.04);
-    filter: blur(2px) brightness(1.1);
+    transform: translate3d(0, 1.2%, 0) scale(1.045);
   }
   100% {
     opacity: 1;
     transform: translate3d(0, 0, 0) scale(1);
-    filter: blur(0) brightness(1);
+  }
+}
+
+@keyframes travelWaveDrift {
+  0%,
+  48% {
+    opacity: 0;
+    transform: translate3d(-2%, 12px, 0) rotate(var(--wave-rotate, 0deg)) scaleX(1.02);
+  }
+  70% {
+    opacity: var(--wave-opacity, 0.62);
+  }
+  100% {
+    opacity: var(--wave-opacity, 0.62);
+    transform: translate3d(2%, 0, 0) rotate(var(--wave-rotate, 0deg)) scaleX(1.06);
+  }
+}
+
+@keyframes travelWaterDrift {
+  0%,
+  48% {
+    opacity: 0.18;
+    transform: translate3d(-2%, 8px, 0);
+  }
+  70% {
+    opacity: 0.48;
+  }
+  100% {
+    opacity: 0.48;
+    transform: translate3d(2%, 0, 0);
   }
 }
 
 @keyframes travelPaperReveal {
   0%,
-  74% {
+  72% {
     opacity: 0;
-    transform: translate3d(-50%, 32px, 0) rotate(-1deg) scale(0.72);
+    transform: translate3d(-50%, 42px, 0) rotate(-1.4deg) scale(0.7);
   }
   91% {
     opacity: 1;
-    transform: translate3d(-50%, -3px, 0) rotate(-1deg) scale(1.02);
+    transform: translate3d(-50%, -4px, 0) rotate(-1.4deg) scale(1.025);
   }
   100% {
     opacity: 1;
-    transform: translate3d(-50%, 0, 0) rotate(-1deg) scale(1);
-  }
-}
-
-@keyframes travelBloom {
-  0%,
-  78% {
-    opacity: 0;
-    transform: translate3d(0, 16px, 0) scale(0.72) rotate(var(--bloom-rotate, 0deg));
-  }
-  100% {
-    opacity: 0.72;
+    transform: translate3d(-50%, 0, 0) rotate(-1.4deg) scale(1);
   }
 }
 
 .travel-transition.is-simple .travel-orbit {
   animation-name: travelOrbitSimple;
-  animation-duration: 3.4s;
+  animation-duration: 3.6s;
 }
 
 .travel-transition.is-simple .travel-stars {
   animation-name: travelStarsSimple;
-  animation-duration: 3.4s;
+  animation-duration: 3.6s;
 }
 
 .travel-transition.is-simple .travel-beach {
   animation-name: travelBeachSimple;
-  animation-duration: 3.4s;
+  animation-duration: 3.6s;
 }
 
-.travel-transition.is-simple .travel-paper-preview,
-.travel-transition.is-simple .travel-hydrangea {
+.travel-transition.is-simple .travel-paper-preview {
   animation-name: travelPaperRevealSimple;
-  animation-duration: 3.4s;
+  animation-duration: 3.6s;
+}
+
+.travel-transition.is-simple::before,
+.travel-transition.is-simple::after,
+.travel-transition.is-simple .travel-arrival-base,
+.travel-transition.is-simple .earth-land,
+.travel-transition.is-simple .travel-cloud,
+.travel-transition.is-simple .travel-wave {
+  animation-duration: 3.6s;
 }
 
 @keyframes travelStarsSimple {
@@ -1734,9 +2227,13 @@ body.is-traveling .qr-panel {
 
 @keyframes travelBeachSimple {
   0%,
-  44% {
+  34% {
     opacity: 0;
-    transform: scale(1.06);
+    transform: scale(1.07);
+  }
+  58% {
+    opacity: 0.72;
+    transform: scale(1.03);
   }
   100% {
     opacity: 1;
@@ -1761,8 +2258,7 @@ body.is-traveling .qr-panel {
 
   .experience,
   .loader,
-  .audio-toggle,
-  .qr-toggle,
+  .floating-menu,
   .qr-panel {
     visibility: hidden;
   }
@@ -1805,7 +2301,15 @@ body.is-traveling .qr-panel {
   }
 
   .memory-board {
-    inset: 22px 42px;
+    inset: 52px 42px 22px;
+  }
+
+  .memory-phrase {
+    top: 12px;
+    max-width: 68vw;
+    padding: 5px 12px 7px;
+    font-size: clamp(0.82rem, 2.6vw, 1.08rem);
+    background: rgba(7, 25, 48, 0.18);
   }
 
   .memory-photo {
@@ -1855,10 +2359,6 @@ body.is-traveling .qr-panel {
     width: min(30vw, 260px);
   }
 
-  .travel-hydrangea {
-    width: clamp(44px, 7vw, 70px);
-  }
-
   .letter-sea {
     height: 30%;
   }
@@ -1874,33 +2374,43 @@ body.is-traveling .qr-panel {
     box-shadow: 0 8px 18px rgba(83, 58, 30, 0.16), inset 0 0 0 3px rgba(255, 255, 255, 0.86);
   }
 
-  .letter-beach-decor {
-    display: none;
-  }
-
   h1 {
     font-size: clamp(2.7rem, 8vw, 5rem);
   }
 
-  .audio-toggle,
-  .qr-toggle {
+  .floating-menu {
+    top: max(8px, env(safe-area-inset-top));
+    right: max(8px, env(safe-area-inset-right));
+  }
+
+  .menu-toggle {
     top: 8px;
-    min-height: 32px;
-    padding: 0 12px;
-    font-size: 0.78rem;
+    width: 38px;
+    min-height: 30px;
+    font-size: 1.34rem;
   }
 
-  .audio-toggle {
-    right: 8px;
+  .menu-panel {
+    width: 178px;
+    gap: 5px;
+    padding: 8px;
   }
 
-  .qr-toggle {
-    left: 8px;
+  .menu-item {
+    min-height: 29px;
+    padding: 0 10px;
+    font-size: 0.72rem;
+  }
+
+  .menu-volume {
+    gap: 4px;
+    padding: 6px 8px 8px;
+    font-size: 0.68rem;
   }
 
   .qr-panel {
-    top: 46px;
-    left: 8px;
+    top: max(46px, calc(env(safe-area-inset-top) + 46px));
+    right: max(8px, env(safe-area-inset-right));
     width: 136px;
     padding: 9px;
   }

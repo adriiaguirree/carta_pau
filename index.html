@@ -4,32 +4,50 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <title>Para Pau</title>
-    <link rel="stylesheet" href="styles.css?v=20260623-40">
+    <link rel="stylesheet" href="styles.css?v=20260623-48">
   </head>
   <body>
-    <div class="loader" id="loader" aria-hidden="true">
+    <div class="loader" id="loader" aria-hidden="false">
       <div class="loader-mark">P</div>
       <p>Preparando tu carta...</p>
     </div>
-    <button class="audio-toggle" id="audioToggle" type="button" aria-pressed="false">Música</button>
-    <audio id="song" src="media/cancion.mp4?v=20260623-40" preload="auto" autoplay loop></audio>
-    <button class="qr-toggle" id="qrToggle" type="button" aria-expanded="false">QR</button>
+
+    <audio id="song" src="media/cancion.mp4?v=20260623-48" preload="auto" autoplay loop></audio>
+
+    <div class="floating-menu" id="floatingMenu">
+      <button class="menu-toggle" id="menuToggle" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="menuPanel">⋯</button>
+      <div class="menu-panel" id="menuPanel" role="menu" aria-label="Menú de la carta">
+        <button class="menu-item" id="menuQr" type="button" role="menuitem" aria-expanded="false" aria-controls="qrPanel">QR</button>
+        <button class="menu-item" id="menuMusic" type="button" role="menuitem" aria-pressed="false">Música OFF</button>
+        <label class="menu-volume" for="volumeControl">
+          <span>Volumen</span>
+          <input id="volumeControl" type="range" min="0" max="100" value="72" aria-label="Volumen de la música">
+        </label>
+        <div class="menu-divider" aria-hidden="true"></div>
+        <button class="menu-item menu-nav-item" id="menuHeart" type="button" role="menuitem" disabled>Corazón</button>
+        <button class="menu-item menu-nav-item" id="menuMemories" type="button" role="menuitem" disabled>Recuerdos</button>
+        <button class="menu-item menu-nav-item" id="menuLetter" type="button" role="menuitem" disabled>Carta</button>
+      </div>
+    </div>
+
     <aside class="qr-panel" id="qrPanel" aria-label="Código QR para abrir la carta en celular">
-      <img src="media/qr-carta-pau.png?v=20260623-40" alt="QR de la carta para Pau">
+      <img src="media/qr-carta-pau.png?v=20260623-48" alt="QR de la carta para Pau">
       <p>Escanea para abrirla en el celular.</p>
     </aside>
+
     <div class="orientation-prompt" aria-hidden="true">
       <div>
         <span>↻</span>
         <p>Gira tu celular</p>
       </div>
     </div>
+
     <main class="experience" aria-live="polite">
       <section class="scene scene-heart is-active" id="heartScene">
         <div class="stars" aria-hidden="true"></div>
         <canvas class="dot-canvas" id="dotCanvas" aria-hidden="true"></canvas>
         <div class="intro-copy">
-          <p class="eyebrow">Feliz cumple mi amor <3</p>
+          <p class="eyebrow">Feliz cumple mi amor &lt;3</p>
           <h1>Para ti,</h1>
           <p>Un pequeño pedacito de todo lo que significas para mí.</p>
           <button class="primary-button press-button" id="openLetter" type="button" aria-label="Abrir recuerdos">
@@ -40,6 +58,7 @@
 
       <section class="scene scene-memory" id="memoryScene" aria-hidden="true">
         <div class="memory-board" id="memoryBoard" aria-label="Collage de recuerdos de vacaciones"></div>
+        <p class="memory-phrase">Gracias por los mejores días de mi vida.</p>
         <div class="memory-actions" id="memoryActions">
           <button class="primary-button memory-letter-button" id="openFinalLetter" type="button" aria-label="Abrir carta">P</button>
           <button class="ghost-button icon-button" id="downloadMemory" type="button" aria-label="Guardar collage de recuerdos">↓</button>
@@ -51,8 +70,6 @@
           <span class="letter-sea"></span>
           <span class="letter-shore"></span>
           <div class="letter-beach-photos" id="letterBeachPhotos"></div>
-          <span class="letter-beach-decor decor-a"></span>
-          <span class="letter-beach-decor decor-b"></span>
         </div>
         <div class="letter-shimmer" aria-hidden="true"></div>
         <div class="envelope" id="envelope">
@@ -73,8 +90,6 @@
             <button class="ghost-button" id="skipTyping" type="button">Ver completa</button>
             <button class="ghost-button" id="rereadLetter" type="button">Leer de nuevo</button>
             <button class="ghost-button" id="downloadLetter" type="button">Guardar carta</button>
-            <button class="ghost-button" id="viewMemories" type="button">Ver recuerdos</button>
-            <button class="ghost-button" id="restart" type="button">Volver al corazón</button>
           </footer>
         </article>
         <div class="final-card" id="finalCard" aria-live="polite">
@@ -90,28 +105,40 @@
       <button class="photo-viewer-close" id="photoViewerClose" type="button" aria-label="Cerrar foto">×</button>
       <img id="photoViewerImage" src="" alt="Recuerdo de vacaciones">
     </div>
+
     <div class="scene-transition" id="sceneTransition" aria-hidden="true"></div>
+
     <div class="travel-transition" id="travelTransition" aria-hidden="true">
       <div class="travel-stars" aria-hidden="true"></div>
       <div class="travel-orbit" aria-hidden="true">
         <div class="travel-earth">
+          <span class="earth-land land-a"></span>
+          <span class="earth-land land-b"></span>
+          <span class="earth-land land-c"></span>
+          <span class="earth-land land-d"></span>
           <span class="travel-cloud cloud-a"></span>
           <span class="travel-cloud cloud-b"></span>
           <span class="travel-cloud cloud-c"></span>
+          <span class="travel-cloud cloud-d"></span>
           <span class="mexico-marker"></span>
           <span class="mexico-glow"></span>
         </div>
       </div>
+      <div class="travel-arrival-base" aria-hidden="true"></div>
       <div class="travel-beach" aria-hidden="true">
         <span class="travel-sea"></span>
         <span class="travel-shore"></span>
         <span class="travel-sand"></span>
-        <span class="travel-hydrangea bloom-a"></span>
-        <span class="travel-hydrangea bloom-b"></span>
+        <span class="travel-wave wave-a"></span>
+        <span class="travel-wave wave-b"></span>
+        <span class="travel-wave wave-c"></span>
+        <span class="travel-foam foam-a"></span>
+        <span class="travel-foam foam-b"></span>
+        <span class="travel-light"></span>
         <span class="travel-paper-preview"></span>
       </div>
     </div>
 
-    <script src="script.js?v=20260623-40"></script>
+    <script src="script.js?v=20260623-48"></script>
   </body>
 </html>
