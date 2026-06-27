@@ -10,7 +10,7 @@ hoy, en tu cumpleaños, no puedo evitar sentirme afortunado de poder celebrar tu
 
 deseo que este nuevo año de tu vida esté lleno de momentos bonitos, de sueños cumplidos, de risas que te salgan del alma y de todo el amor que mereces. yo quiero estar ahí para verte crecer, abrazarte en tus días buenos y también en los difíciles, recordarte lo increíble que eres cuando se te olvide y hacerte sentir amada todos los días, no solo hoy.
 
-eres la mejor mujer que he conocido en mi vida. eres mi mejor amiga, mi compañera y la mejor novia que la vida me pudo otorgar. de verdad, esto que escribo es apenas el 1 por ciento de todo lo que siento por ti, y estoy seguro de que este amor seguirá creciendo con el tiempo. celebraré hoy y todos los días de mi vida tu existencia, porque mereces todo lo bonito de la vida, paulina. genuinamente te amo.
+eres la mejor mujer que he conocido en mi vida. eres mi mejor amiga, mi compañera y la mejor novia que la vida me pudo otorgar. de verdad, esto que escribo es apenas el uno por ciento de todo lo que siento por ti, y estoy seguro de que este amor seguirá creciendo con el tiempo. celebraré hoy y todos los días de mi vida tu existencia, porque mereces todo lo bonito de la vida, paulina. genuinamente te amo.
 
 gracias por ser tú, por tu forma de querer, por tu sonrisa, por tu corazón tan bonito y por hacer de mi vida un lugar mucho más feliz. hoy celebro tu cumpleaños, pero también celebro la suerte inmensa que tengo de coincidir contigo, de poder acompañarte y de amar a una persona tan increíble como tú.
 
